@@ -17,7 +17,7 @@ package main
 
 // NOTE: to compile this, you need >=gtk/gdk-3.10 and >=go-1.3.1
 // You will also need my modified fork of gotk3: github.com/Francesco149/gotk3
-// (go get it then rename it to github.com/conformal/gotk3 so that it can be 
+// (go get it then rename it to github.com/conformal/gotk3 so that it can be
 // properly imported)
 
 import (
@@ -55,7 +55,7 @@ func handleCLI() (err error) {
 
 	psite := flag.String("s", "default", "\n\tTarget site name (default = default site for the selected mode)\n")
 	psilent := flag.Bool("q", false, "\n\tQuiet mode - disables all terminal output except errors\n")
-	pnotification := flag.Bool("n", false, "\n\t(not yet implemented) Notification - " + 
+	pnotification := flag.Bool("n", false, "\n\t(not yet implemented) Notification - "+
 		"displays a GTK notification for the upload\n")
 	popen := flag.Bool("o", false, "\n\tOpen url - automatically opens the uploaded file's url in the default browser\n")
 	phistory := flag.Bool("history", false, "\n\tShow upload history (grep-able)\n")

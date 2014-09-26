@@ -17,7 +17,7 @@
 // it can be used to implement custom front-ends for sharenix.
 // NOTE: to compile this, you need >=gtk/gdk-3.10 and >=go-1.3.1
 // You will also need my modified fork of gotk3: github.com/Francesco149/gotk3
-// (go get it then rename it to github.com/conformal/gotk3 so that it can be 
+// (go get it then rename it to github.com/conformal/gotk3 so that it can be
 // properly imported)
 package sharenixlib
 
@@ -69,7 +69,7 @@ func MakeArchiveDir() error {
 			return err
 		}
 	}
-	
+
 	return nil
 }
 
@@ -135,7 +135,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 		if err != nil {
 			return
 		}
-	
+
 		var pixbuf *gdk.Pixbuf
 		// assume that the user has copied an image
 		DebugPrintln("Looking for copied raw images...")
