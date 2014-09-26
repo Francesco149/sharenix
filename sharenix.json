@@ -1,0 +1,37 @@
+{
+	"DefaultFileUploader": "hnng.moe (file upload)", 
+	"DefaultImageUploader": "hnng.moe (file upload)", 
+	"DefaultUrlShortener": "hnng.moe (url shortener)", 
+	
+	"Services": [
+		{
+			"Name": "hnng.moe (url shortener)",
+			"RequestType": "GET",
+			"RequestURL": "http://www.hnng.moe/shortapi.php",
+			"FileFormName": "",
+			"Arguments": {
+				"url": "$input$"
+			},
+			"ResponseType": "Text",
+			"RegexList": [],
+			"URL": "",
+			"ThumbnailURL": "",
+			"DeletionURL": ""
+		}, 
+		{
+			"Name": "hnng.moe (file upload)",
+			"RequestType": "POST",
+			"RequestURL": "http://www.hnng.moe/upload_d.php",
+			"FileFormName": "file",
+			"Arguments": {},
+			"ResponseType": "Text",
+			"RegexList": [
+				"\\\"url\\\":\\\"(.+?)\\\"",
+				"\\\"deletelink\\\":\\\"(.+?)\\\""
+			],
+			"URL": "$1,1$",
+			"ThumbnailURL": "",
+			"DeletionURL": "$2,1$"
+		}
+	]
+}

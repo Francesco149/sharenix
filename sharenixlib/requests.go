@@ -1,0 +1,114 @@
+/*
+   Copyright 2014 Franc[e]sco (lolisamurai@tfwno.gf)
+   This file is part of sharenix.
+   sharenix is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   sharenix is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+   You should have received a copy of the GNU General Public License
+   along with sharenix. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package sharenixlib
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"mime/multipart"
+	"net/http"
+	"net/textproto"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
+
+func escapeQuotes(s string) string {
+	return quoteEscaper.Replace(s)
+}
+
+// SniffMimeType sniffs the mime type of a binary file by reading the first 512 bytes
+func SniffMimeType(filePath string) (string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	// first 512 bytes are used to evaluate mime type
+	first512 := make([]byte, 512)
+	file.Read(first512)
+
+	return http.DetectContentType(first512), nil
+}
+
+// SendFilePostRequest prepares a multipart file upload POST request and sends it
+func SendFilePostRequest(url, fileParamName, filePath string,
+	extraParams map[string]string) (res *http.Response, filename string, err error) {
+
+	filename = filepath.Base(filePath)
+
+	realmime, err := SniffMimeType(filePath)
+	if err != nil {
+		return
+	}
+
+	// try opening the file
+	file, err := os.Open(filePath)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	// prepare request body buffer
+	buf := &bytes.Buffer{}
+
+	// create a multipart file header with the given param name and file
+	w := multipart.NewWriter(buf)
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition",
+		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
+			escapeQuotes(fileParamName), escapeQuotes(filename)))
+	h.Set("Content-Type", realmime)
+	formfile, err := w.CreatePart(h)
+	if err != nil {
+		return
+	}
+
+	// write the file to the file header
+	_, err = io.Copy(formfile, file)
+
+	// the writer must be closed to finalize the file entry
+	err = w.Close()
+	if err != nil {
+		return
+	}
+
+	// append extra params
+	for param, val := range extraParams {
+		err = w.WriteField(param, val)
+		if err != nil {
+			return
+		}
+	}
+
+	// finally create the request
+	req, err := http.NewRequest("POST", url, buf)
+	if err != nil {
+		return
+	}
+
+	// set type & boundary
+	req.Header.Set("Content-Type", w.FormDataContentType())
+
+	// send request
+	client := &http.Client{}
+	res, err = client.Do(req)
+	return
+}
