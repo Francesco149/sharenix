@@ -77,7 +77,7 @@ Before we start building ShareNix, you will need to set up a few dependencies.
 	
 * Get xgb by running
 
-	go get github.com/BurntSushi/xgb
+		go get github.com/BurntSushi/xgb
 
 Once you've done that, all that's left is to clone the repository.
 Make sure that you have git and go installed and run
