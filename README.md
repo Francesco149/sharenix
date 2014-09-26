@@ -62,14 +62,18 @@ Before we start building ShareNix, you will need to set up a few dependencies.
 * Make sure that you have go >=1.3.1
 * Install my fork of gotk3 by running
 
-	go get -tags gtk_3_10 github.com/Francesco149/gotk3/gtk
+
+		go get -tags gtk_3_10 github.com/Francesco149/gotk3/gtk
+
 	
 * Remove the clean gotk3 installation and move my fork of gotk3 to 
   the original gotk3 directory with
 
-	rm -r -f $GOPATH/src/github.com/conformal/
-	mkdir $GOPATH/src/github.com/conformal/
-	mv $GOPATH/src/github.com/Francesco149/gotk3 $GOPATH/src/github.com/conformal/gotk3
+
+		rm -r -f $GOPATH/src/github.com/conformal/
+		mkdir $GOPATH/src/github.com/conformal/
+		mv $GOPATH/src/github.com/Francesco149/gotk3 $GOPATH/src/github.com/conformal/gotk3
+	
 	
 * Get xgb by running
 
@@ -95,6 +99,7 @@ and copy the default config file to $GOPATH/bin
 	cp $GOPATH/src/github.com/Francesco149/sharenix/sharenix.json $GOPATH/bin/sharenix.json 
 	
 then run it (in this example I'm going to be uploading a full-screen screenshot to the default site)
+
 	cd $GOPATH/bin
 	./sharenix -m=fs
     
