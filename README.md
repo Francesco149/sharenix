@@ -33,19 +33,16 @@ Feature progress
 Getting started - Prebuilt x64 binaries
 ============
 If you're on amd64 you can get the pre-built binaries in the release section.
-The binaries were built on Gentoo 4.7.3-r1 p1.4, pie-0.5.5 and should be 
-stand-alone, but make sure that you have >=gtk-3.10 and >=gdk-3.10, those are 
-the only dependencies as they aren't pure Go libraries. 
+The binaries were built on Ubuntu x64 and should be stand-alone, but make sure 
+that you have >=gtk-3.10 and >=gdk-3.10, those are the only dependencies as 
+they aren't pure Go libraries. 
 
 Once you have the binaries, unzip them in a folder and run sharenix like so:
 
-	$ mkdir sharenix
-	$ unzip sharenix-0.1a-amd64-gtk_3_10.zip -d sharenix
-	Archive:  sharenix-0.1a-amd64.zip
-	  inflating: sharenix/sharenix.json  
-	  inflating: sharenix/sharenix       
-	$ cd sharenix
-	$ ./sharenix -h
+	tar -zxvf sharenix-linux-amd64.tar.gz
+	mv sharenix-linux-amd64 ~/.sharenix
+	cd ~/.sharenix
+	./sharenix -h
 	
 You can now set-up sharenix any way you like: bind it to hotkeys, symlink it 
 in /usr/bin to launch it from your terminal, and so on.
@@ -55,6 +52,50 @@ More info on the regex parsing will be coming soon, but the behaviour is nearly
 the same as ShareX so you could just read through 
 [this section](https://github.com/ShareX/ShareX/wiki/Custom%20Uploader) of 
 the ShareX guide.
+
+Screenshotting areas or windows
+============
+Until actual area/window grabbing is implemented, you can hack together region 
+and window screenshotting using these bash scripts (xclip and gnome-screenshot 
+are required).
+Remember to replace loli with your username.
+
+sharenix-section.sh
+
+	#!/bin/sh
+
+	# take a screenshot using gnome-screenshot
+	sharenixtmp=$(mktemp /tmp/nicememe.XXXXXXXXXXXXXXXXXXX.png)
+	xclip -i -selection clipboard -t text/uri-list $sharenixtmp
+	gnome-screenshot -a -f $sharenixtmp
+
+	# check file size (0 bytes means that gnome-screenshot was cancelled)
+	sharenixtmpsize=$(wc -c <"$sharenixtmp")
+	if [ $sharenixtmpsize != 0 ]; then
+		/home/loli/.sharenix/sharenix -o $sharenixtmp
+	fi
+	
+sharenix-window.sh
+
+	#!/bin/sh
+
+	# take a screenshot using gnome-screenshot
+	sharenixtmp=$(mktemp /tmp/nicememe.XXXXXXXXXXXXXXXXXXX.png)
+	xclip -i -selection clipboard -t text/uri-list $sharenixtmp
+	gnome-screenshot -w -f $sharenixtmp
+
+	# check file size (0 bytes means that gnome-screenshot was cancelled)
+	sharenixtmpsize=$(wc -c <"$sharenixtmp")
+	if [ $sharenixtmpsize != 0 ]; then
+		/home/loli/.sharenix/sharenix -o $sharenixtmp
+	fi
+	
+You can bind them to hotkeys in CompizConfig Settings Manager under commands 
+like so:
+
+[](http://hnng.moe/f/35d)
+
+[](http://hnng.moe/f/35e)
 
 Getting started - Building from the source
 ============
