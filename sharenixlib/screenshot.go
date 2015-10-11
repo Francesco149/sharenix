@@ -57,7 +57,8 @@ func FullScreenRect() (rect image.Rectangle, err error) {
 		return
 	}
 
-	rect = image.Rect(0, 0, int(screen.WidthInPixels), int(screen.HeightInPixels))
+	rect = image.Rect(0, 0, int(screen.WidthInPixels),
+		int(screen.HeightInPixels))
 	return
 }
 
@@ -70,7 +71,8 @@ func CaptureScreen() (pic *image.RGBA, err error) {
 	return CaptureRect(rect)
 }
 
-// CaptureRect captures the given section of the screen and returns an uncompressed image
+// CaptureRect captures the given section of
+// the screen and returns an uncompressed image
 func CaptureRect(rect image.Rectangle) (pic *image.RGBA, err error) {
 	con, err := xgb.NewConn()
 	if err != nil {
@@ -97,6 +99,7 @@ func CaptureRect(rect image.Rectangle) (pic *image.RGBA, err error) {
 		data[i], data[i+2], data[i+3] = data[i+2], data[i], 255
 	}
 
-	pic = &image.RGBA{data, 4 * rect.Dx(), image.Rect(0, 0, rect.Dx(), rect.Dy())}
+	pic = &image.RGBA{data, 4 * rect.Dx(),
+		image.Rect(0, 0, rect.Dx(), rect.Dy())}
 	return
 }

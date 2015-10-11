@@ -27,15 +27,17 @@ import (
 	"flag"
 	"github.com/conformal/gotk3/gdk"
 	"github.com/conformal/gotk3/gtk"
+	"github.com/kardianos/osext"
 	"image"
 	"image/png"
 	"net/http"
 	"os"
 	"os/exec"
+	"path"
 )
 
 const ShareNixDebug = true
-const ShareNixVersion = "ShareNix 0.1.1a"
+const ShareNixVersion = "ShareNix 0.1.2a"
 
 // UploadFile uploads a file
 // cfg: the ShareNix config
@@ -57,14 +59,30 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 		path, sitecfg.Arguments)
 }
 
+// GetArchiveDir returns the absolute path to the archive directory.
+func GetArchiveDir() (archiveDir string, err error) {
+	exeFolder, err := osext.ExecutableFolder()
+	if err != nil {
+		return
+	}
+	archiveDir = path.Join(exeFolder, "/archive/")
+	return
+}
+
+// MakeArchiveDir creates the archive directory if it doesn't exist already.
 func MakeArchiveDir() error {
+	achiveDir, err := GetArchiveDir()
+	if err != nil {
+		return err
+	}
+
 	// create archive dir
-	direxists, err := FileExists("./archive/")
+	direxists, err := FileExists(achiveDir)
 	if err != nil {
 		return err
 	}
 	if !direxists {
-		err = os.Mkdir("./archive/", os.ModePerm)
+		err = os.Mkdir(achiveDir, os.ModePerm)
 		if err != nil {
 			return err
 		}
@@ -90,13 +108,11 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig,
 		return nil, "", err
 	}
 
-	err = MakeArchiveDir()
+	// save to archive
+	afilepath, err := GenerateArchivedFilename("png")
 	if err != nil {
 		return nil, "", err
 	}
-
-	// save to archive
-	afilepath := GenerateArchivedFilename("png")
 	tmpfile, err := os.Create(afilepath)
 	if err != nil {
 		return nil, "", err
@@ -119,7 +135,8 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig,
 // silent: disables all console output except errors
 // notification: displays a gtk notification for the upload
 func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
-	silent, notification bool) (res *http.Response, filename string, err error) {
+	silent, notification bool) (
+	res *http.Response, filename string, err error) {
 
 	clipboard, err := GetClipboard()
 	if err != nil {
@@ -131,11 +148,6 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 		gdk.GdkAtomIntern("x-special/gnome-copied-files", false))
 
 	if err != nil {
-		err = MakeArchiveDir()
-		if err != nil {
-			return
-		}
-
 		var pixbuf *gdk.Pixbuf
 		// assume that the user has copied an image
 		DebugPrintln("Looking for copied raw images...")
@@ -144,17 +156,24 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 			return
 		}
 
-		DebugPrintln("Colorspace:", int(pixbuf.GetColorspace()), "Channels:", pixbuf.GetNChannels(),
-			"Has Alpha:", pixbuf.GetHasAlpha(), "BPS:", pixbuf.GetBitsPerSample(), "Width:",
-			pixbuf.GetWidth(), "Height:", pixbuf.GetHeight(), "Rowstride:", pixbuf.GetRowstride(),
+		DebugPrintln("Colorspace:", int(pixbuf.GetColorspace()), "Channels:",
+			pixbuf.GetNChannels(), "Has Alpha:", pixbuf.GetHasAlpha(), "BPS:",
+			pixbuf.GetBitsPerSample(), "Width:", pixbuf.GetWidth(), "Height:",
+			pixbuf.GetHeight(), "Rowstride:", pixbuf.GetRowstride(),
 			"Byte length:", pixbuf.GetByteLength())
 
 		// encode png to archive and upload
 		// TODO: check if the image format can change and how to deal with it
 		pixels := pixbuf.GetPixels()
-		pic := &image.RGBA{pixels, 4 * pixbuf.GetWidth(), image.Rect(0, 0, pixbuf.GetWidth(), pixbuf.GetHeight())}
+		pic := &image.RGBA{pixels, 4 * pixbuf.GetWidth(), image.Rect(0, 0,
+			pixbuf.GetWidth(), pixbuf.GetHeight())}
 
-		afilepath := GenerateArchivedFilename("png")
+		var afilepath string
+		afilepath, err = GenerateArchivedFilename("png")
+		if err != nil {
+			return
+		}
+
 		var tmpfile *os.File
 		tmpfile, err = os.Create(afilepath)
 		if err != nil {
@@ -205,6 +224,11 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	gtk.Init(nil)
 
+	err = MakeArchiveDir()
+	if err != nil {
+		return
+	}
+
 	// initial upload mode check
 	sitecfg, err = cfg.Parse(mode, site, silent)
 	if err != nil {
@@ -218,10 +242,12 @@ func ShareNix(cfg *Config, mode, site string, silent,
 			err = errors.New("No file provided")
 			return
 		}
-		res, filename, err = UploadFile(cfg, sitecfg, flag.Args()[0], silent, notification)
+		res, filename, err = UploadFile(
+			cfg, sitecfg, flag.Args()[0], silent, notification)
 
 	case "fs", "fullscreen":
-		res, filename, err = UploadFullScreen(cfg, sitecfg, silent, notification)
+		res, filename, err = UploadFullScreen(
+			cfg, sitecfg, silent, notification)
 
 	case "c", "clipboard":
 		res, filename, err = UploadClipboard(cfg, sitecfg, silent, notification)

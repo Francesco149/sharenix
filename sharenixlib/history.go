@@ -23,7 +23,8 @@ import (
 	"path"
 )
 
-func getCSV() (csv string, err error) {
+// GetHistoryCSV returns the absolute path to the history csv.
+func GetHistoryCSV() (csv string, err error) {
 	exeFolder, err := osext.ExecutableFolder()
 	if err != nil {
 		return
@@ -34,7 +35,7 @@ func getCSV() (csv string, err error) {
 
 // GetUploadHistory returns all of the records in sharenix.csv
 func GetUploadHistory() (res [][]string, err error) {
-	csvPath, err := getCSV()
+	csvPath, err := GetHistoryCSV()
 	if err != nil {
 		return
 	}
@@ -58,7 +59,9 @@ func quote(str string) string {
 */
 
 // AppendToHistory appends the given record to sharenix.csv
-func AppendToHistory(url, thumbnailurl, deleteurl, filename string) (err error) {
+func AppendToHistory(url, thumbnailurl, deleteurl, filename string) (
+	err error) {
+
 	current, err := GetUploadHistory()
 	if err != nil {
 		current = make([][]string, 0)
@@ -71,7 +74,7 @@ func AppendToHistory(url, thumbnailurl, deleteurl, filename string) (err error) 
 	current = append(current, []string{url, thumbnailurl,
 		deleteurl, filename})
 
-	csvPath, err := getCSV()
+	csvPath, err := GetHistoryCSV()
 	if err != nil {
 		return
 	}

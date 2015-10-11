@@ -29,7 +29,8 @@ type SiteConfig struct {
 	DeletionURL  string
 }
 
-// A Config holds the json ShareX config for all sites plus the default upload targets
+// A Config holds the json ShareX config for all sites plus the default upload
+// targets
 type Config struct {
 	DefaultFileUploader  string
 	DefaultImageUploader string
@@ -59,7 +60,9 @@ func (cfg *Config) GetServiceByName(name string) *SiteConfig {
 		r/record: record screen region and upload
 		u/url: shorten url
 */
-func (cfg *Config) Parse(mode string, site string, silent bool) (sitecfg *SiteConfig, err error) {
+func (cfg *Config) Parse(mode string, site string, silent bool) (
+	sitecfg *SiteConfig, err error) {
+
 	DebugPrintln("Parsing config...")
 
 	if site == "default" {
@@ -87,10 +90,13 @@ func (cfg *Config) Parse(mode string, site string, silent bool) (sitecfg *SiteCo
 	return
 }
 
-// IsDefaultSite returns true if the given site name is on if the default sites in the config
+// IsDefaultSite returns true if the given site name is on if the default
+// sites in the config
 func (cfg *Config) IsDefaultSite(site string) bool {
 	switch site {
-	case cfg.DefaultFileUploader, cfg.DefaultImageUploader, cfg.DefaultUrlShortener:
+	case cfg.DefaultFileUploader,
+		cfg.DefaultImageUploader,
+		cfg.DefaultUrlShortener:
 		return true
 
 	default:
@@ -100,8 +106,8 @@ func (cfg *Config) IsDefaultSite(site string) bool {
 	return false
 }
 
-// HandleFileType tries to find and return the most suitable site to upload the file to if
-// a default site is currently selected.
+// HandleFileType tries to find and return the most suitable site to upload the
+// file to if a default site is currently selected.
 func (cfg *Config) HandleFileType(currentsitecfg *SiteConfig,
 	filePath string, silent bool) (sitecfg *SiteConfig, err error) {
 

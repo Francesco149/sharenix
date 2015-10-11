@@ -33,7 +33,8 @@ func escapeQuotes(s string) string {
 	return quoteEscaper.Replace(s)
 }
 
-// SniffMimeType sniffs the mime type of a binary file by reading the first 512 bytes
+// SniffMimeType sniffs the mime type of a binary file by reading the
+// first 512 bytes
 func SniffMimeType(filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -48,9 +49,11 @@ func SniffMimeType(filePath string) (string, error) {
 	return http.DetectContentType(first512), nil
 }
 
-// SendFilePostRequest prepares a multipart file upload POST request and sends it
+// SendFilePostRequest prepares a multipart
+// file upload POST request and sends it
 func SendFilePostRequest(url, fileParamName, filePath string,
-	extraParams map[string]string) (res *http.Response, filename string, err error) {
+	extraParams map[string]string) (res *http.Response,
+	filename string, err error) {
 
 	filename = filepath.Base(filePath)
 

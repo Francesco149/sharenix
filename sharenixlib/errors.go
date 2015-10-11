@@ -24,7 +24,8 @@ func (e *NotImplementedError) Error() string {
 	return "Not implemented!"
 }
 
-// A SiteNotFoundError is returned when the target site doesn't exist in the config
+// A SiteNotFoundError is returned when the
+// target site doesn't exist in the config
 type SiteNotFoundError struct {
 	site string
 }

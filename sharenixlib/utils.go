@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"path"
 	"time"
 )
 
@@ -97,12 +98,18 @@ func FileExists(path string) (bool, error) {
 	return false, err
 }
 
-// GenerateArchivedFilename returns an unique file path inside ./archive/ that contains the
-// current date, time and nanotime.
-func GenerateArchivedFilename(extension string) string {
+// GenerateArchivedFilename returns an unique file path inside
+// archive/ that contains the current date, time and nanotime.
+func GenerateArchivedFilename(extension string) (string, error) {
 	t := time.Now()
 	ye, mo, da := t.Date()
 	hour, min, sec := t.Clock()
-	return fmt.Sprintf("./archive/%v-%v-%v_%v-%v-%v_%v.%s",
-		ye, int(mo), da, hour, min, sec, t.UnixNano(), extension)
+
+	archiveDir, err := GetArchiveDir()
+	if err != nil {
+		return "", err
+	}
+
+	return path.Join(archiveDir, fmt.Sprintf("%v-%v-%v_%v-%v-%v_%v.%s",
+		ye, int(mo), da, hour, min, sec, t.UnixNano(), extension)), nil
 }

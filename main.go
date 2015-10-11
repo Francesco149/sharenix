@@ -109,8 +109,8 @@ func handleCLI() (err error) {
 				return
 			}
 
-			fmt.Println("*", record[3], "- URL:", record[0], "Thumbnail URL:", record[1],
-				"Deletion URL:", record[2])
+			fmt.Println("*", record[3], "- URL:", record[0], "Thumbnail URL:",
+				record[1], "Deletion URL:", record[2])
 			fmt.Println()
 		}
 
