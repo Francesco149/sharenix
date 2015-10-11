@@ -18,12 +18,28 @@ package sharenixlib
 import (
 	"encoding/csv"
 	//"fmt"
+	"github.com/kardianos/osext"
 	"os"
+	"path"
 )
+
+func getCSV() (csv string, err error) {
+	exeFolder, err := osext.ExecutableFolder()
+	if err != nil {
+		return
+	}
+	csv = path.Join(exeFolder, "sharenix.csv")
+	return
+}
 
 // GetUploadHistory returns all of the records in sharenix.csv
 func GetUploadHistory() (res [][]string, err error) {
-	file, err := os.Open("./sharenix.csv")
+	csvPath, err := getCSV()
+	if err != nil {
+		return
+	}
+
+	file, err := os.Open(csvPath)
 	if err != nil {
 		return
 	}
@@ -55,7 +71,12 @@ func AppendToHistory(url, thumbnailurl, deleteurl, filename string) (err error) 
 	current = append(current, []string{url, thumbnailurl,
 		deleteurl, filename})
 
-	file, err := os.Create("./sharenix.csv")
+	csvPath, err := getCSV()
+	if err != nil {
+		return
+	}
+
+	file, err := os.Create(csvPath)
 	if err != nil {
 		return
 	}

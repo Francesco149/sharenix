@@ -36,9 +36,11 @@ func GetClipboard() (*gtk.Clipboard, error) {
 	return clipboard, nil
 }
 
-// SetClipbboardText sets the clipboard text contents and calls clipboard.Store().
-// Note: this requires the program to run at least a few cycles of the main loop and
-// it is not guaranteed to persist on all window managers once the program terminates.
+// SetClipbboardText sets the clipboard text contents and calls
+// clipboard.Store().
+// Note: this requires the program to run at least a few cycles of the main loop
+// and it is not guaranteed to persist on all window managers once the program
+// terminates.
 func SetClipboardText(text string) (err error) {
 	clipboard, err := GetClipboard()
 	if err != nil {
@@ -46,6 +48,8 @@ func SetClipboardText(text string) (err error) {
 	}
 
 	clipboard.SetText(text)
+	gtk.MainIterationDo(true)
 	clipboard.Store()
+	gtk.MainIterationDo(true)
 	return
 }

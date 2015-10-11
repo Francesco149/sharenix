@@ -26,14 +26,21 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Francesco149/sharenix/sharenixlib"
+	"github.com/kardianos/osext"
 	"io/ioutil"
+	"path"
 )
 
 func loadConfig() (cfg *sharenixlib.Config, err error) {
 	cfg = &sharenixlib.Config{}
 
+	exeFolder, err := osext.ExecutableFolder()
+	if err != nil {
+		return
+	}
+
 	// load config
-	file, err := ioutil.ReadFile("./sharenix.json")
+	file, err := ioutil.ReadFile(path.Join(exeFolder, "sharenix.json"))
 	if err != nil {
 		return
 	}
@@ -48,18 +55,31 @@ func handleCLI() (err error) {
 	}
 
 	// command line flags
-	pmode := flag.String("m", "f", "\n\tUpload mode\n\tf/file: upload file\n\tfs/fullscreen: "+
-		"screenshot entire screen and upload\n\ts/section: select screen region and upload\n\t"+
-		"c/clipboard: upload clipboard contents\n\tr/record: record screen region and upload\n\t"+
-		"u/url: shorten url\n")
+	pmode := flag.String("m", "f",
+		"Upload mode - f/file: upload file, fs/fullscreen: screenshot entire "+
+			"screen and upload, s/section: select screen region and upload, "+
+			"c/clipboard: upload clipboard contents, r/record: record screen "+
+			"region and upload, u/url: shorten url")
 
-	psite := flag.String("s", "default", "\n\tTarget site name (default = default site for the selected mode)\n")
-	psilent := flag.Bool("q", false, "\n\tQuiet mode - disables all terminal output except errors\n")
-	pnotification := flag.Bool("n", false, "\n\t(not yet implemented) Notification - "+
-		"displays a GTK notification for the upload\n")
-	popen := flag.Bool("o", false, "\n\tOpen url - automatically opens the uploaded file's url in the default browser\n")
-	phistory := flag.Bool("history", false, "\n\tShow upload history (grep-able)\n")
-	pversion := flag.Bool("v", false, "\n\tShows the program version\n")
+	psite := flag.String("s", "default",
+		"Target site name (default = default site for the selected mode)")
+
+	psilent := flag.Bool("q", false,
+		"Quiet mode - disables all terminal output except errors")
+
+	pnotification := flag.Bool("n", false,
+		"(not yet implemented) Notification - "+
+			"displays a GTK notification for the upload")
+
+	popen := flag.Bool("o", false, "Open url - automatically opens the "+
+		"uploaded file's url in the default browser")
+
+	pclip := flag.Bool("c", true, "Copy url to clipboard - copies the "+
+		"uploaded file's url to the clipboard (not guaranteed to work properly"+
+		"on all window managers, tested on Unity + X11)")
+
+	phistory := flag.Bool("history", false, "Show upload history (grep-able)")
+	pversion := flag.Bool("v", false, "Shows the program version")
 
 	flag.Parse()
 	if !flag.Parsed() {
@@ -98,7 +118,8 @@ func handleCLI() (err error) {
 	}
 
 	// perform upload
-	url, thumburl, deleteurl, err := sharenixlib.ShareNix(cfg, *pmode, *psite, *psilent, *pnotification, *popen)
+	url, thumburl, deleteurl, err := sharenixlib.ShareNix(
+		cfg, *pmode, *psite, *psilent, *pnotification, *popen, *pclip)
 	if err != nil {
 		return
 	}

@@ -35,7 +35,7 @@ import (
 )
 
 const ShareNixDebug = true
-const ShareNixVersion = "ShareNix 0.1a"
+const ShareNixVersion = "ShareNix 0.1.1a"
 
 // UploadFile uploads a file
 // cfg: the ShareNix config
@@ -168,13 +168,15 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 
 	// upload first copied file with UploadFile
 	// TODO: batch upload all copied files
-	urilist := ParseUriList(string(selectiondata.GetData()))
+	selectionstr := string(selectiondata.GetData())
+	DebugPrintln(selectionstr)
+	urilist := ParseUriList(selectionstr)
 	if len(urilist) < 1 {
 		err = errors.New("Could not grab copied file list")
 		return
 	}
 
-	return UploadFile(cfg, sitecfg, urilist[0], silent, notification)
+	return UploadFile(cfg, sitecfg, urilist[0].Path, silent, notification)
 }
 
 /*
@@ -187,13 +189,15 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 		c/clipboard: upload clipboard contents
 		r/record: record screen region and upload
 		u/url: shorten url
-	site: name of the taget site
+	site: name of the target site
 	silent: disables all console output except errors if enabled
 	notification: displays a gtk notification for uploads if enabled
-	open: automatically opens the uploaded file in the default browser if enabled
+	open: automatically opens the uploaded file in the default browser
+	copyurl: stores the url in the clipboard after uploading
 */
 func ShareNix(cfg *Config, mode, site string, silent,
-	notification, open bool) (url, thumburl, deleteurl string, err error) {
+	notification, open, copyurl bool) (
+	url, thumburl, deleteurl string, err error) {
 
 	var sitecfg *SiteConfig
 	var res *http.Response
@@ -230,31 +234,43 @@ func ShareNix(cfg *Config, mode, site string, silent,
 		return
 	}
 
-	// parse response
-	DebugPrintln("Parsing response...")
-	rbody := &bytes.Buffer{}
-	_, err = rbody.ReadFrom(res.Body)
-	if err != nil {
-		return
-	}
+	switch sitecfg.ResponseType {
+	case "RedirectionURL":
+		DebugPrintln("Getting redirection url...")
+		url = res.Request.URL.String()
+	default:
+		// parse response
+		DebugPrintln("Parsing response...")
+		rbody := &bytes.Buffer{}
+		_, err = rbody.ReadFrom(res.Body)
+		if err != nil {
+			return
+		}
 
-	// parse all regular expressions
-	results, err := ParseRegexList(rbody.String(), sitecfg.RegexList)
-	if err != nil {
-		return
-	}
+		// parse all regular expressions
+		var results [][]string
+		results, err = ParseRegexList(rbody.String(), sitecfg.RegexList)
+		if err != nil {
+			return
+		}
 
-	// replace regular expression tags in urls
-	url = ParseUrl(sitecfg.URL, results)
-	thumburl = ParseUrl(sitecfg.ThumbnailURL, results)
-	deleteurl = ParseUrl(sitecfg.DeletionURL, results)
+		// replace regular expression tags in urls
+		url = ParseUrl(sitecfg.URL, results)
+		thumburl = ParseUrl(sitecfg.ThumbnailURL, results)
+		deleteurl = ParseUrl(sitecfg.DeletionURL, results)
 
-	// empty url = take entire response as url
-	if len(url) == 0 {
-		url = rbody.String()
+		// empty url = take entire response as url
+		if len(url) == 0 {
+			url = rbody.String()
+		}
 	}
 
 	AppendToHistory(url, thumburl, deleteurl, filename)
+
+	if copyurl {
+		DebugPrintln("Copying url to clipboard...")
+		SetClipboardText(url)
+	}
 
 	if open {
 		err = exec.Command("xdg-open", url).Run()

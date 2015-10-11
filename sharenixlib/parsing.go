@@ -16,6 +16,7 @@
 package sharenixlib
 
 import (
+	"net/url"
 	"regexp"
 	"strconv"
 	"unicode"
@@ -23,9 +24,11 @@ import (
 
 // TODO: named regex support
 
-// ParseRegexList parses a list of regular expressions on the given input and returns
-// a slice of slices of strings with the match groups of each regex
-func ParseRegexList(input string, regexList []string) (res [][]string, err error) {
+// ParseRegexList parses a list of regular expressions on the given input
+// and returns a slice of slices of strings with the match groups of each regex
+func ParseRegexList(input string, regexList []string) (
+	res [][]string, err error) {
+
 	res = make([][]string, len(regexList))
 
 	for i, regex := range regexList {
@@ -41,7 +44,8 @@ func ParseRegexList(input string, regexList []string) (res [][]string, err error
 	return
 }
 
-// parseRegexSyntax parses a $n$ or $n,n$ substring and returns the regexp match that should replace it
+// parseRegexSyntax parses a $n$ or $n,n$ substring and returns the regexp match
+// that should replace it
 func parseRegexSyntax(text string, regexResults [][]string) string {
 	// 1:1 port of ShareX's code to achieve the closest similarity in behaviour
 
@@ -100,7 +104,8 @@ func parseRegexSyntax(text string, regexResults [][]string) string {
 	return match[0]
 }
 
-// ParseUrl replaces $n$ and $n,n$ tags in the given url with the proper regex matches
+// ParseUrl replaces $n$ and $n,n$ tags in the given url with the
+// proper regex matches
 func ParseUrl(url string, regexResults [][]string) string {
 	// 1:1 port of ShareX's code to achieve the closest similarity in behaviour
 
@@ -141,7 +146,17 @@ func ParseUrl(url string, regexResults [][]string) string {
 
 // Parses a uri list returned by "x-special/gnome-copied-files"
 // and returns a slice of strings with all of the file uris
-func ParseUriList(list string) []string {
-	re := regexp.MustCompile("((?:\\/[\\w\\.\\-]+)+)")
-	return re.FindAllString(list, -1)
+// note: this assumes that each file uri starts with file:/// which I hope is
+//       the standard guaranteed format for x-special/gnome-copied-files.
+func ParseUriList(list string) (res []*url.URL) {
+	re := regexp.MustCompile(`file:/{2,}(-\.)?([^\s/?\.#-]+\.?)+(/[^\s]*)?`)
+	uris := re.FindAllString(list, -1)
+	for _, uri := range uris {
+		u, err := url.Parse(uri)
+		if err != nil {
+			continue
+		}
+		res = append(res, u)
+	}
+	return
 }

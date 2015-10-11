@@ -1,12 +1,13 @@
-ShareNix is a ShareX clone for Linux coded in Go. It features image/screenshot and file 
-uploading to almost any file/image sharing service that has a public API thanks to the 
-easily customizable json configuration.
+ShareNix is a ShareX clone for Linux coded in Go. It features image/screenshot 
+and file uploading to almost any file/image sharing service that has a public 
+API thanks to the easily customizable json configuration.
 
-ShareNix is only available as a command-line interface for now, but it will soon have 
-a GUI to manage your settings and view your upload history.
+ShareNix is only available as a command-line interface for now, but it will soon 
+have a GUI to manage your settings and view your upload history.
 
-ShareNix uses the same configuration format as ShareX. If you're a ShareX user, you can 
-easily import your settings by pasting them in the Services section of sharenix.json. 
+ShareNix uses the same configuration format as ShareX. If you're a ShareX user, 
+you can easily import your settings by pasting them in the Services section of 
+sharenix.json. 
 
 Feature progress
 ============
@@ -32,9 +33,9 @@ Feature progress
 Getting started - Prebuilt x64 binaries
 ============
 If you're on amd64 you can get the pre-built binaries in the release section.
-The binaries were built on Gentoo 4.7.3-r1 p1.4, pie-0.5.5 and should be stand-alone, 
-but make sure that you have >=gtk-3.10 and >=gdk-3.10, those are the only dependencies 
-as they aren't pure Go libraries. 
+The binaries were built on Gentoo 4.7.3-r1 p1.4, pie-0.5.5 and should be 
+stand-alone, but make sure that you have >=gtk-3.10 and >=gdk-3.10, those are 
+the only dependencies as they aren't pure Go libraries. 
 
 Once you have the binaries, unzip them in a folder and run sharenix like so:
 
@@ -59,25 +60,34 @@ Getting started - Building from the source
 ============
 Before we start building ShareNix, you will need to set up a few dependencies.
 * Make sure that you have >=gtk-3.10 and >=gdk-3.10. 
+* Get the dev headers for glib, cairo, pango and gtk3. On Ubuntu 15.04, the 
+  required packages are: libglib2.0-dev, libcairo-dev, libpango1.0-dev
+  and libgtk-3-dev.
 * Make sure that you have go >=1.3.1
 * Install my fork of gotk3 by running
 
 
-		go get -tags gtk_3_10 github.com/Francesco149/gotk3/gtk
+	go get -tags gtk_3_10 github.com/Francesco149/gotk3/gtk
 
 	
 * Remove the clean gotk3 installation and move my fork of gotk3 to 
   the original gotk3 directory with
 
 
-		rm -r -f $GOPATH/src/github.com/conformal/
-		mkdir $GOPATH/src/github.com/conformal/
-		mv $GOPATH/src/github.com/Francesco149/gotk3 $GOPATH/src/github.com/conformal/gotk3
-	
+	rm -r -f $GOPATH/src/github.com/conformal/
+	rm -r $GOPATH/pkg/linux_amd64/github.com/conformal/
+	rm -r $GOPATH/pkg/linux_386/github.com/conformal/
+	mkdir $GOPATH/src/github.com/conformal/
+	mv $GOPATH/src/github.com/Francesco149/gotk3 $GOPATH/src/github.com/conformal/gotk3
+
 	
 * Get xgb by running
 
-		go get github.com/BurntSushi/xgb
+	go get github.com/BurntSushi/xgb
+	
+* Get osext
+
+	go get github.com/kardianos/osext
 
 Once you've done that, all that's left is to clone the repository.
 Make sure that you have git and go installed and run
@@ -98,7 +108,8 @@ and copy the default config file to $GOPATH/bin
 
 	cp $GOPATH/src/github.com/Francesco149/sharenix/sharenix.json $GOPATH/bin/sharenix.json 
 	
-then run it (in this example I'm going to be uploading a full-screen screenshot to the default site)
+then run it (in this example I'm going to be uploading a full-screen screenshot 
+to the default site)
 
 	cd $GOPATH/bin
 	./sharenix -m=fs
