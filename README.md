@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Feature progress](#feature-progress)
+- [Getting started - Prebuilt x64 binaries](#getting-started---prebuilt-x64-binaries)
+- [Screenshotting areas or windows](#screenshotting-areas-or-windows)
+- [Getting started - Building from the source](#getting-started---building-from-the-source)
+- [Documentation](#documentation)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ShareNix is a ShareX clone for Linux coded in Go. It features image/screenshot 
 and file uploading to almost any file/image sharing service that has a public 
 API thanks to the easily customizable json configuration.
