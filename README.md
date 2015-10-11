@@ -93,9 +93,9 @@ sharenix-window.sh
 You can bind them to hotkeys in CompizConfig Settings Manager under commands 
 like so:
 
-[](http://hnng.moe/f/35d)
+![](http://hnng.moe/f/35d)
 
-[](http://hnng.moe/f/35e)
+![](http://hnng.moe/f/35e)
 
 Getting started - Building from the source
 ============
