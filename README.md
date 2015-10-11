@@ -67,27 +67,27 @@ Before we start building ShareNix, you will need to set up a few dependencies.
 * Install my fork of gotk3 by running
 
 
-	go get -tags gtk_3_10 github.com/Francesco149/gotk3/gtk
+		go get -tags gtk_3_10 github.com/Francesco149/gotk3/gtk
 
 	
 * Remove the clean gotk3 installation and move my fork of gotk3 to 
   the original gotk3 directory with
 
 
-	rm -r -f $GOPATH/src/github.com/conformal/
-	rm -r $GOPATH/pkg/linux_amd64/github.com/conformal/
-	rm -r $GOPATH/pkg/linux_386/github.com/conformal/
-	mkdir $GOPATH/src/github.com/conformal/
-	mv $GOPATH/src/github.com/Francesco149/gotk3 $GOPATH/src/github.com/conformal/gotk3
+		rm -r -f $GOPATH/src/github.com/conformal/
+		rm -r $GOPATH/pkg/linux_amd64/github.com/conformal/
+		rm -r $GOPATH/pkg/linux_386/github.com/conformal/
+		mkdir $GOPATH/src/github.com/conformal/
+		mv $GOPATH/src/github.com/Francesco149/gotk3 $GOPATH/src/github.com/conformal/gotk3
 
 	
 * Get xgb by running
 
-	go get github.com/BurntSushi/xgb
+		go get github.com/BurntSushi/xgb
 	
 * Get osext
 
-	go get github.com/kardianos/osext
+		go get github.com/kardianos/osext
 
 Once you've done that, all that's left is to clone the repository.
 Make sure that you have git and go installed and run
