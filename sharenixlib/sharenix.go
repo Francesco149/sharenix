@@ -25,19 +25,22 @@ import (
 	"bytes"
 	"errors"
 	"flag"
+	"fmt"
 	"github.com/conformal/gotk3/gdk"
 	"github.com/conformal/gotk3/gtk"
 	"github.com/kardianos/osext"
+	"github.com/mvdan/xurls"
 	"image"
 	"image/png"
 	"net/http"
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 )
 
 const ShareNixDebug = true
-const ShareNixVersion = "ShareNix 0.1.2a"
+const ShareNixVersion = "ShareNix 0.1.3a"
 
 // UploadFile uploads a file
 // cfg: the ShareNix config
@@ -57,6 +60,33 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 	// TODO: notification
 	return SendFilePostRequest(sitecfg.RequestURL, sitecfg.FileFormName,
 		path, sitecfg.Arguments)
+}
+
+// ShortenUrl shortens an url
+// cfg: the ShareNix config
+// sitecfg: the target site config
+// url: url to be shortened
+// silent: disables all console output except errors
+// notification: displays a gtk notification for the upload
+func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
+	silent, notification bool) (*http.Response, error) {
+
+	for i := range sitecfg.Arguments {
+		sitecfg.Arguments[i] = strings.Replace(
+			sitecfg.Arguments[i], "$input$", url, -1)
+	}
+	// TODO: notification
+
+	Println(silent, "Shortening to", sitecfg.Name)
+
+	switch sitecfg.RequestType {
+	case "GET":
+		return SendGetRequest(sitecfg.RequestURL, sitecfg.Arguments)
+	case "POST":
+		return SendPostRequest(sitecfg.RequestURL, sitecfg.Arguments)
+	default:
+		return nil, errors.New("Unknown RequestType")
+	}
 }
 
 // GetArchiveDir returns the absolute path to the archive directory.
@@ -128,6 +158,18 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig,
 		afilepath, sitecfg.Arguments)
 }
 
+// Creates and opens an archive file with the given extension.
+func CreateArchiveFile(extension string) (
+	tmpfile *os.File, path string, err error) {
+
+	path, err = GenerateArchivedFilename(extension)
+	if err != nil {
+		return
+	}
+	tmpfile, err = os.Create(path)
+	return
+}
+
 // UploadClipboard grabs an image or a file from the clipboard,
 // saves it in the archive and uploads it
 // cfg: the ShareNix config
@@ -143,19 +185,59 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 		return
 	}
 
-	DebugPrintln("Looking for copied files...")
+	// URI list (copied files)
+	DebugPrintln("Looking for URI list...")
 	selectiondata, err := clipboard.WaitForContents(
 		gdk.GdkAtomIntern("x-special/gnome-copied-files", false))
 
-	if err != nil {
-		var pixbuf *gdk.Pixbuf
-		// assume that the user has copied an image
-		DebugPrintln("Looking for copied raw images...")
-		pixbuf, err = clipboard.WaitForImage()
-		if err != nil {
+	if err == nil {
+		selectionstr := string(selectiondata.GetData())
+		DebugPrintln(selectionstr)
+
+		// upload first copied file with UploadFile
+		// TODO: batch upload all copied files
+		DebugPrintln("Trying to parse URI list...")
+		urilist := ParseUriList(selectionstr)
+		if len(urilist) > 0 {
+			return UploadFile(
+				cfg, sitecfg, urilist[0].Path, silent, notification)
+		}
+		DebugPrintln("URI list is empty")
+	}
+
+	// Plain text (shorten url or upload as text file)
+	DebugPrintln("Looking for plain text...")
+	selectionstr, err := clipboard.WaitForText()
+	if err == nil && len(selectionstr) > 0 {
+		DebugPrintln(selectionstr)
+
+		DebugPrintln("Trying to parse as URL...")
+		if xurls.Strict.MatchString(selectionstr) {
+			sitecfg = cfg.GetServiceByName(cfg.DefaultUrlShortener)
+			res, err = ShortenUrl(cfg, sitecfg,
+				selectionstr, silent, notification)
+			filename = selectionstr
 			return
 		}
 
+		DebugPrintln("Trying to upload as plain text...")
+		var afilepath string
+		var tmpfile *os.File
+		tmpfile, afilepath, err = CreateArchiveFile("txt")
+		if err != nil {
+			return
+		}
+		_, err = tmpfile.WriteString(selectionstr)
+		tmpfile.Close()
+
+		return UploadFile(cfg, sitecfg, afilepath, silent, notification)
+	}
+
+	var pixbuf *gdk.Pixbuf
+	// assume that the user has copied an image
+	DebugPrintln("Looking for copied raw images...")
+	pixbuf, err = clipboard.WaitForImage()
+	if err == nil {
 		DebugPrintln("Colorspace:", int(pixbuf.GetColorspace()), "Channels:",
 			pixbuf.GetNChannels(), "Has Alpha:", pixbuf.GetHasAlpha(), "BPS:",
 			pixbuf.GetBitsPerSample(), "Width:", pixbuf.GetWidth(), "Height:",
@@ -169,33 +251,24 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 			pixbuf.GetWidth(), pixbuf.GetHeight())}
 
 		var afilepath string
-		afilepath, err = GenerateArchivedFilename("png")
+		var tmpfile *os.File
+		tmpfile, afilepath, err = CreateArchiveFile("png")
 		if err != nil {
 			return
 		}
 
-		var tmpfile *os.File
-		tmpfile, err = os.Create(afilepath)
+		err = png.Encode(tmpfile, pic)
 		if err != nil {
 			return
 		}
-		err = png.Encode(tmpfile, pic)
+
 		tmpfile.Close()
 
 		return UploadFile(cfg, sitecfg, afilepath, silent, notification)
 	}
 
-	// upload first copied file with UploadFile
-	// TODO: batch upload all copied files
-	selectionstr := string(selectiondata.GetData())
-	DebugPrintln(selectionstr)
-	urilist := ParseUriList(selectionstr)
-	if len(urilist) < 1 {
-		err = errors.New("Could not grab copied file list")
-		return
-	}
-
-	return UploadFile(cfg, sitecfg, urilist[0].Path, silent, notification)
+	err = errors.New("Could not find any supported data in the clipboard")
+	return
 }
 
 /*
@@ -252,7 +325,16 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	case "c", "clipboard":
 		res, filename, err = UploadClipboard(cfg, sitecfg, silent, notification)
 
-	case "s", "u", "section", "url":
+	case "u", "url":
+		if len(flag.Args()) != 1 {
+			err = errors.New("No url provided")
+			return
+		}
+		res, err = ShortenUrl(cfg, sitecfg,
+			flag.Args()[0], silent, notification)
+		filename = flag.Args()[0]
+
+	case "s", "section":
 		err = &NotImplementedError{}
 	}
 
@@ -291,14 +373,18 @@ func ShareNix(cfg *Config, mode, site string, silent,
 		}
 	}
 
-	AppendToHistory(url, thumburl, deleteurl, filename)
+	if xurls.Strict.MatchString(url) {
+		AppendToHistory(url, thumburl, deleteurl, filename)
+	} else {
+		err = errors.New(fmt.Sprintf("Request failed: %s", url))
+	}
 
 	if copyurl {
 		DebugPrintln("Copying url to clipboard...")
 		SetClipboardText(url)
 	}
 
-	if open {
+	if open && err == nil {
 		err = exec.Command("xdg-open", url).Run()
 	}
 

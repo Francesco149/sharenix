@@ -38,7 +38,13 @@ func ParseRegexList(input string, regexList []string) (
 			return
 		}
 
-		res[i] = re.FindAllStringSubmatch(input, -1)[0]
+		matches := re.FindAllStringSubmatch(input, -1)
+
+		if len(matches) > 0 {
+			res[i] = matches[0]
+		} else {
+			res[i] = nil
+		}
 	}
 
 	return

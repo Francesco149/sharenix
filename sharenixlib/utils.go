@@ -17,7 +17,6 @@ package sharenixlib
 
 import (
 	"fmt"
-	"net/url"
 	"os"
 	"path"
 	"time"
@@ -52,38 +51,6 @@ func IsImage(mimeType string) bool {
 	}
 
 	return false
-}
-
-// IsUrl returns true if the file at the given path contains
-// a plain text valid url
-func IsUrl(filePath string) (bool, error) {
-	const maxUrlSize = 2048
-
-	data := make([]byte, maxUrlSize)
-	file, err := os.Open(filePath)
-	if err != nil {
-		return false, err
-	}
-	defer file.Close()
-
-	stat, err := file.Stat()
-	if err != nil {
-		return false, err
-	}
-
-	if stat.Size() > maxUrlSize {
-		return false, nil
-	}
-
-	file.Read(data)
-
-	_, err = url.ParseRequestURI(string(data))
-	if err != nil {
-		DebugPrintln("Not an url:", err)
-		return false, nil
-	}
-
-	return true, nil
 }
 
 // FileExists returns true if the given directory or file exists

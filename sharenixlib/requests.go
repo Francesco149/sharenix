@@ -22,10 +22,41 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+// SendGetRequest sends a GET request with params
+func SendGetRequest(baseurl string, params map[string]string) (
+	res *http.Response, err error) {
+
+	u, err := url.Parse(baseurl)
+	if err != nil {
+		return
+	}
+
+	q := u.Query()
+	for name, value := range params {
+		q.Set(name, value)
+	}
+	u.RawQuery = q.Encode()
+
+	DebugPrintln(u)
+	res, err = http.Get(u.String())
+	return
+}
+
+// SendGetRequest sends a POST request with params
+func SendPostRequest(baseurl string, params map[string]string) (*http.Response, error) {
+	q := url.Values{}
+	for name, value := range params {
+		q.Set(name, value)
+	}
+	DebugPrintln(baseurl, q)
+	return http.PostForm(baseurl, q)
+}
 
 var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
 
@@ -112,6 +143,7 @@ func SendFilePostRequest(url, fileParamName, filePath string,
 
 	// send request
 	client := &http.Client{}
+	DebugPrintln(req.URL, extraParams)
 	res, err = client.Do(req)
 	return
 }

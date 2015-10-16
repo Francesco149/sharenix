@@ -76,9 +76,11 @@ func (cfg *Config) Parse(mode string, site string, silent bool) (
 		case "c", "clipboard":
 			site = cfg.DefaultFileUploader
 
-		case "s", "u", "section", "url":
+		case "u", "url":
+			site = cfg.DefaultUrlShortener
+
+		case "s", "section":
 			err = &NotImplementedError{}
-			return
 		}
 	}
 
@@ -131,19 +133,7 @@ func (cfg *Config) HandleFileType(currentsitecfg *SiteConfig,
 		DebugPrintln("Switching to default image uploader")
 		newsite = cfg.DefaultImageUploader
 
-	// url shorten
-	case mimeType == "text/plain" && newsite != cfg.DefaultUrlShortener:
-		var isurl bool
-		isurl, err = IsUrl(filePath)
-		if err != nil {
-			return
-		}
-		if isurl {
-			DebugPrintln("Switching to default url shortener")
-			newsite = cfg.DefaultUrlShortener
-		}
-
-	// not an image, not an url - we're handling a file
+	// not an image - we're handling a file
 	case newsite != cfg.DefaultFileUploader:
 		DebugPrintln("Switching to default file uploader")
 		newsite = cfg.DefaultFileUploader
