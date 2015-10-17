@@ -32,8 +32,8 @@ Feature progress
 * Automatically open uploads in browser if requested - done (-o flag)
 * Archiving clipboard and screenshot uploads to a local folder - done (saved in ./archive/)
 * Upload multiple files from clipboard - WIP
-* Upload text from clipboard - WIP
-* URL shortening - WIP
+* Upload text from clipboard - done
+* URL shortening - done
 * Screen region selection - WIP
 * Upload progress bar - WIP
 * Basic upload history csv file - done (./sharenix -history)
