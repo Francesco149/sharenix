@@ -24,8 +24,8 @@ sharenix.json.
 Feature progress
 ============
 * Parsing ShareX's json config - done
-* Parsing regexp tags - done
-* Parsing tags in the parameters - WIP
+* Parsing regexp tags - done (no named groups)
+* Parsing tags in the parameters - done
 * File upload - done (./sharenix path/to/file)
 * Full-screen screenshot - done (./sharenix -m=fs)
 * Upload files and images from clipboard - done (./sharenix -m=c)
