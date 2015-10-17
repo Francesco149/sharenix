@@ -43,7 +43,7 @@ Feature progress
 * Upload GTK notification - WIP
 * Screen recording - WIP
 
-Getting started - Prebuilt x64 binaries
+Getting started - Prebuilt binaries
 ============
 If you're on amd64 or i386 you can get the pre-built binaries in the release 
 section.
