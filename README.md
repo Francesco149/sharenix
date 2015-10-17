@@ -30,7 +30,8 @@ Feature progress
 * Full-screen screenshot - done (./sharenix -m=fs)
 * Upload files and images from clipboard - done (./sharenix -m=c)
 * Automatically open uploads in browser if requested - done (-o flag)
-* Archiving clipboard and screenshot uploads to a local folder - done (saved in ./archive/)
+* Archiving clipboard and screenshot uploads to a local folder - done 
+  (saved in ./archive/)
 * Upload multiple files from clipboard - WIP
 * Upload text from clipboard - done
 * URL shortening - done
@@ -44,7 +45,8 @@ Feature progress
 
 Getting started - Prebuilt x64 binaries
 ============
-If you're on amd64 you can get the pre-built binaries in the release section.
+If you're on amd64 or i386 you can get the pre-built binaries in the release 
+section.
 The binaries were built on Ubuntu x64 and should be stand-alone, but make sure 
 that you have >=gtk-3.10 and >=gdk-3.10, those are the only dependencies as 
 they aren't pure Go libraries. 
