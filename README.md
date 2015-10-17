@@ -3,7 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Feature progress](#feature-progress)
-- [Getting started - Prebuilt x64 binaries](#getting-started---prebuilt-x64-binaries)
+- [Getting started - Prebuilt binaries](#getting-started---prebuilt-binaries)
 - [Screenshotting areas or windows](#screenshotting-areas-or-windows)
 - [Getting started - Building from the source](#getting-started---building-from-the-source)
 - [Documentation](#documentation)
