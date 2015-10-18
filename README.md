@@ -40,7 +40,7 @@ Feature progress
 * Basic upload history csv file - done (./sharenix -history)
 * Grep-able upload history output - done (./sharenix -history | grep helloworld)
 * GUI tools for config & history - WIP
-* Upload GTK notification - WIP
+* Upload GTK notification - done
 * Screen recording - WIP
 
 Getting started - Prebuilt binaries
@@ -86,7 +86,7 @@ sharenix-section.sh
 	# check file size (0 bytes means that gnome-screenshot was cancelled)
 	sharenixtmpsize=$(wc -c <"$sharenixtmp")
 	if [ $sharenixtmpsize != 0 ]; then
-		/home/loli/.sharenix/sharenix -o $sharenixtmp
+		/home/loli/.sharenix/sharenix -n $sharenixtmp
 	fi
 	
 sharenix-window.sh
@@ -101,15 +101,15 @@ sharenix-window.sh
 	# check file size (0 bytes means that gnome-screenshot was cancelled)
 	sharenixtmpsize=$(wc -c <"$sharenixtmp")
 	if [ $sharenixtmpsize != 0 ]; then
-		/home/loli/.sharenix/sharenix -o $sharenixtmp
+		/home/loli/.sharenix/sharenix -n $sharenixtmp
 	fi
 	
 You can bind them to hotkeys in CompizConfig Settings Manager under commands 
 like so:
 
-![](http://hnng.moe/f/35d)
+![](http://hnng.moe/f/3CQ)
 
-![](http://hnng.moe/f/35e)
+![](http://hnng.moe/f/3CR)
 
 Getting started - Building from the source
 ============
@@ -136,13 +136,11 @@ Before we start building ShareNix, you will need to set up a few dependencies.
 		mv $GOPATH/src/github.com/Francesco149/gotk3 $GOPATH/src/github.com/conformal/gotk3
 
 	
-* Get xgb by running
+* Get the other required libraries
 
 		go get github.com/BurntSushi/xgb
-	
-* Get osext
-
 		go get github.com/kardianos/osext
+		go get github.com/mvdan/xurls
 
 Once you've done that, all that's left is to clone the repository.
 Make sure that you have git and go installed and run

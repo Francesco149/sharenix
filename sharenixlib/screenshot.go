@@ -25,7 +25,7 @@ import (
 // This file is heavily inspired by https://github.com/vova616/screenshot
 // Full credits to vova616 for the method.
 
-// defaultSceen returns the default screen info
+// defaultScreen returns the default screen info
 func defaultScreen(con *xgb.Conn) (screen *xproto.ScreenInfo, err error) {
 	// get setup info
 	setupInfo := xproto.Setup(con)
@@ -34,7 +34,6 @@ func defaultScreen(con *xgb.Conn) (screen *xproto.ScreenInfo, err error) {
 		return
 	}
 
-	// get default screen TODO: iterate all screens for multi monitor setups
 	screen = setupInfo.DefaultScreen(con)
 	if screen == nil {
 		err = errors.New("No screens detected!")

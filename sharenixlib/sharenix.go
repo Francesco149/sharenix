@@ -27,6 +27,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/conformal/gotk3/gdk"
+	"github.com/conformal/gotk3/glib"
 	"github.com/conformal/gotk3/gtk"
 	"github.com/kardianos/osext"
 	"github.com/mvdan/xurls"
@@ -40,26 +41,39 @@ import (
 )
 
 const ShareNixDebug = true
-const ShareNixVersion = "ShareNix 0.1.3a"
+const ShareNixVersion = "ShareNix 0.2a"
 
 // UploadFile uploads a file
 // cfg: the ShareNix config
 // sitecfg: the target site config
 // path: file path
 // silent: disables all console output except errors
-// notification: displays a gtk notification for the upload
+// notif: if true, a notification will display during and after the request
 func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
-	silent, notification bool) (*http.Response, string, error) {
+	silent, notif bool) (res *http.Response, filename string, err error) {
 
-	sitecfg, err := cfg.HandleFileType(sitecfg, path, silent)
+	sitecfg, err = cfg.HandleFileType(sitecfg, path, silent)
 	if err != nil {
-		return nil, "", err
+		return
 	}
 
 	Println(silent, "Uploading file to", sitecfg.Name)
-	// TODO: notification
-	return SendFilePostRequest(sitecfg.RequestURL, sitecfg.FileFormName,
-		path, sitecfg.Arguments)
+
+	doThings := func() (*http.Response, string, error) {
+		return SendFilePostRequest(sitecfg.RequestURL,
+			sitecfg.FileFormName, path, sitecfg.Arguments)
+	}
+
+	if notif {
+		onload := func(w *gtk.Window) {
+			res, filename, err = doThings()
+			glib.IdleAdd(w.Destroy)
+			DebugPrintln("Goroutine is exiting")
+		}
+		err = Notifyf(onload, "Uploading %s to %s...", path, sitecfg.Name)
+		return
+	}
+	return doThings()
 }
 
 // ShortenUrl shortens an url
@@ -67,26 +81,39 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 // sitecfg: the target site config
 // url: url to be shortened
 // silent: disables all console output except errors
-// notification: displays a gtk notification for the upload
+// notif: if true, a notification will display during and after the request
 func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
-	silent, notification bool) (*http.Response, error) {
+	silent, notif bool) (res *http.Response, err error) {
 
 	for i := range sitecfg.Arguments {
 		sitecfg.Arguments[i] = strings.Replace(
 			sitecfg.Arguments[i], "$input$", url, -1)
 	}
-	// TODO: notification
 
-	Println(silent, "Shortening to", sitecfg.Name)
+	Println(silent, "Shortening with", sitecfg.Name)
 
-	switch sitecfg.RequestType {
-	case "GET":
-		return SendGetRequest(sitecfg.RequestURL, sitecfg.Arguments)
-	case "POST":
-		return SendPostRequest(sitecfg.RequestURL, sitecfg.Arguments)
-	default:
-		return nil, errors.New("Unknown RequestType")
+	doThings := func() (*http.Response, error) {
+		switch sitecfg.RequestType {
+		case "GET":
+			return SendGetRequest(sitecfg.RequestURL, sitecfg.Arguments)
+		case "POST":
+			return SendPostRequest(sitecfg.RequestURL, sitecfg.Arguments)
+		default:
+			return nil, errors.New("Unknown RequestType")
+		}
 	}
+
+	if notif {
+		onload := func(w *gtk.Window) {
+			res, err = doThings()
+			glib.IdleAdd(w.Destroy)
+			DebugPrintln("Goroutine is exiting")
+		}
+		err = Notifyf(onload, "Shortening %s with %s...", url, sitecfg.Name)
+		return
+	}
+
+	return doThings()
 }
 
 // GetArchiveDir returns the absolute path to the archive directory.
@@ -126,36 +153,49 @@ func MakeArchiveDir() error {
 // cfg: the ShareNix config
 // sitecfg: the target site config
 // silent: disables all console output except errors
-// notification: displays a gtk notification for the upload
-func UploadFullScreen(cfg *Config, sitecfg *SiteConfig,
-	silent, notification bool) (*http.Response, string, error) {
+// notif: if true, a notification will display during and after the request
+func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
+	res *http.Response, file string, err error) {
 
 	Println(silent, "Taking screenshot...")
+
 	// capture screen
-	var img *image.RGBA
 	img, err := CaptureScreen()
 	if err != nil {
-		return nil, "", err
+		return
 	}
 
 	// save to archive
 	afilepath, err := GenerateArchivedFilename("png")
 	if err != nil {
-		return nil, "", err
+		return
 	}
+
 	tmpfile, err := os.Create(afilepath)
 	if err != nil {
-		return nil, "", err
+		return
 	}
+
 	err = png.Encode(tmpfile, img)
 	tmpfile.Close()
 
-	// TODO: notification
-
 	// upload
 	Println(silent, "Uploading to", sitecfg.Name)
-	return SendFilePostRequest(sitecfg.RequestURL, sitecfg.FileFormName,
-		afilepath, sitecfg.Arguments)
+
+	doThings := func() (*http.Response, string, error) {
+		return SendFilePostRequest(sitecfg.RequestURL, sitecfg.FileFormName,
+			afilepath, sitecfg.Arguments)
+	}
+
+	if notif {
+		onload := func(w *gtk.Window) {
+			res, file, err = doThings()
+			glib.IdleAdd(w.Destroy)
+			DebugPrintln("Goroutine is exiting")
+		}
+		err = Notifyf(onload, "Uploading screenshot to %s...", sitecfg.Name)
+	}
+	return doThings()
 }
 
 // Creates and opens an archive file with the given extension.
@@ -175,9 +215,8 @@ func CreateArchiveFile(extension string) (
 // cfg: the ShareNix config
 // sitecfg: the target site config
 // silent: disables all console output except errors
-// notification: displays a gtk notification for the upload
-func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
-	silent, notification bool) (
+// notif: if true, a notification will display during and after the request
+func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	res *http.Response, filename string, err error) {
 
 	clipboard, err := GetClipboard()
@@ -200,7 +239,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 		urilist := ParseUriList(selectionstr)
 		if len(urilist) > 0 {
 			return UploadFile(
-				cfg, sitecfg, urilist[0].Path, silent, notification)
+				cfg, sitecfg, urilist[0].Path, silent, notif)
 		}
 		DebugPrintln("URI list is empty")
 	}
@@ -215,7 +254,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 		if xurls.Strict.MatchString(selectionstr) {
 			sitecfg = cfg.GetServiceByName(cfg.DefaultUrlShortener)
 			res, err = ShortenUrl(cfg, sitecfg,
-				selectionstr, silent, notification)
+				selectionstr, silent, notif)
 			filename = selectionstr
 			return
 		}
@@ -230,11 +269,11 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 		_, err = tmpfile.WriteString(selectionstr)
 		tmpfile.Close()
 
-		return UploadFile(cfg, sitecfg, afilepath, silent, notification)
+		return UploadFile(cfg, sitecfg, afilepath, silent, notif)
 	}
 
+	// Raw image (copied from an image editor or from the browser)
 	var pixbuf *gdk.Pixbuf
-	// assume that the user has copied an image
 	DebugPrintln("Looking for copied raw images...")
 	pixbuf, err = clipboard.WaitForImage()
 	if err == nil {
@@ -245,7 +284,6 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 			"Byte length:", pixbuf.GetByteLength())
 
 		// encode png to archive and upload
-		// TODO: check if the image format can change and how to deal with it
 		pixels := pixbuf.GetPixels()
 		pic := &image.RGBA{pixels, 4 * pixbuf.GetWidth(), image.Rect(0, 0,
 			pixbuf.GetWidth(), pixbuf.GetHeight())}
@@ -264,7 +302,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 
 		tmpfile.Close()
 
-		return UploadFile(cfg, sitecfg, afilepath, silent, notification)
+		return UploadFile(cfg, sitecfg, afilepath, silent, notif)
 	}
 
 	err = errors.New("Could not find any supported data in the clipboard")
@@ -283,7 +321,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig,
 		u/url: shorten url
 	site: name of the target site
 	silent: disables all console output except errors if enabled
-	notification: displays a gtk notification for uploads if enabled
+	notification: displays a gtk notification if enabled
 	open: automatically opens the uploaded file in the default browser
 	copyurl: stores the url in the clipboard after uploading
 */
@@ -315,8 +353,8 @@ func ShareNix(cfg *Config, mode, site string, silent,
 			err = errors.New("No file provided")
 			return
 		}
-		res, filename, err = UploadFile(
-			cfg, sitecfg, flag.Args()[0], silent, notification)
+		res, filename, err = UploadFile(cfg, sitecfg,
+			flag.Args()[0], silent, notification)
 
 	case "fs", "fullscreen":
 		res, filename, err = UploadFullScreen(
@@ -346,7 +384,7 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	case "RedirectionURL":
 		DebugPrintln("Getting redirection url...")
 		url = res.Request.URL.String()
-	default:
+	case "Text":
 		// parse response
 		DebugPrintln("Parsing response...")
 		rbody := &bytes.Buffer{}
@@ -371,6 +409,8 @@ func ShareNix(cfg *Config, mode, site string, silent,
 		if len(url) == 0 {
 			url = rbody.String()
 		}
+	default:
+		url = "Unrecognized ResponseType"
 	}
 
 	if xurls.Strict.MatchString(url) {
@@ -386,6 +426,14 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	if open && err == nil {
 		err = exec.Command("xdg-open", url).Run()
+	}
+
+	if notification {
+		if err != nil {
+			Notifyf(nil, "%v", err)
+		} else {
+			Notifyf(nil, `<a href="%s">%s</a>`, url, url)
+		}
 	}
 
 	return
