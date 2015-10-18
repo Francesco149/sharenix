@@ -21,6 +21,8 @@ ShareNix uses the same configuration format as ShareX. If you're a ShareX user,
 you can easily import your settings by pasting them in the Services section of 
 sharenix.json. 
 
+[Demonstration video](http://hnng.moe/f/3CI).
+
 Feature progress
 ============
 * Parsing ShareX's json config - done
