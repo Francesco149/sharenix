@@ -75,9 +75,10 @@ func lockEnd(index int) (err error) {
 // Notifyf formats and shows a notification as a bordeless GTK window in the
 // bottom right corner of the screen.
 // Right-clicking the notification dismisses it and terminates the process.
+// expire is the time after which the notification will expire automatically.
 // onInit is a goroutine that will be started before the gtk main loop
 // blocks the main thread. It takes the notification window as a parameter.
-func Notifyf(onInit func(*gtk.Window), format string,
+func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
 	a ...interface{}) (err error) {
 
 	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
@@ -183,12 +184,12 @@ func Notifyf(onInit func(*gtk.Window), format string,
 
 	DebugPrintln("starting gtk.Main()")
 	dismissed := make(chan bool)
-	go func() { // 30s timer that kills the notification if the user doesn't
+	go func() { // timer that kills the notification if the user doesn't
 		select {
 		case <-dismissed:
 			DebugPrintln("Notification dismissed")
-		case <-time.After(time.Second * 30):
-			DebugPrintln("Notification expired after 30s")
+		case <-time.After(expire):
+			DebugPrintln("Notification expired after", expire)
 			glib.IdleAdd(win.Destroy)
 			<-dismissed
 		}

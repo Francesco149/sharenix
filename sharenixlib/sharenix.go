@@ -38,10 +38,18 @@ import (
 	"os/exec"
 	"path"
 	"strings"
+	"time"
 )
 
-const ShareNixDebug = true
-const ShareNixVersion = "ShareNix 0.2a"
+const (
+	ShareNixDebug   = true
+	ShareNixVersion = "ShareNix 0.2.1a"
+)
+
+const (
+	notifTime    = time.Second * 30
+	infiniteTime = time.Duration(9000000000000000000)
+)
 
 // UploadFile uploads a file
 // cfg: the ShareNix config
@@ -70,7 +78,8 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 			glib.IdleAdd(w.Destroy)
 			DebugPrintln("Goroutine is exiting")
 		}
-		err = Notifyf(onload, "Uploading %s to %s...", path, sitecfg.Name)
+		err = Notifyf(infiniteTime,
+			onload, "Uploading %s to %s...", path, sitecfg.Name)
 		return
 	}
 	return doThings()
@@ -109,7 +118,8 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 			glib.IdleAdd(w.Destroy)
 			DebugPrintln("Goroutine is exiting")
 		}
-		err = Notifyf(onload, "Shortening %s with %s...", url, sitecfg.Name)
+		err = Notifyf(infiniteTime,
+			onload, "Shortening %s with %s...", url, sitecfg.Name)
 		return
 	}
 
@@ -193,7 +203,9 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 			glib.IdleAdd(w.Destroy)
 			DebugPrintln("Goroutine is exiting")
 		}
-		err = Notifyf(onload, "Uploading screenshot to %s...", sitecfg.Name)
+		err = Notifyf(infiniteTime,
+			onload, "Uploading screenshot to %s...", sitecfg.Name)
+		return
 	}
 	return doThings()
 }
@@ -430,9 +442,9 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	if notification {
 		if err != nil {
-			Notifyf(nil, "%v", err)
+			Notifyf(notifTime, nil, "%v", err)
 		} else {
-			Notifyf(nil, `<a href="%s">%s</a>`, url, url)
+			Notifyf(notifTime, nil, `<a href="%s">%s</a>`, url, url)
 		}
 	}
 
