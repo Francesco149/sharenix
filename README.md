@@ -4,6 +4,7 @@
 
 - [Feature progress](#feature-progress)
 - [Getting started - Prebuilt binaries](#getting-started---prebuilt-binaries)
+- [Notifications and canceling uploads](#notifications-and-canceling-uploads)
 - [Screenshotting areas or windows](#screenshotting-areas-or-windows)
 - [Getting started - Building from the source](#getting-started---building-from-the-source)
 - [Documentation](#documentation)
@@ -42,7 +43,7 @@ Feature progress
 * Basic upload history csv file - done (./sharenix -history)
 * Grep-able upload history output - done (./sharenix -history | grep helloworld)
 * GUI tools for config & history - WIP
-* Clickable GTK notifications - done
+* Clickable GTK notifications - done (-n flag)
 * Screen recording - WIP
 
 Getting started - Prebuilt binaries
