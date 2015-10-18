@@ -118,19 +118,10 @@ func handleCLI() (err error) {
 	}
 
 	// perform upload
-	url, thumburl, deleteurl, err := sharenixlib.ShareNix(
+	_, _, _, err = sharenixlib.ShareNix(
 		cfg, *pmode, *psite, *psilent, *pnotification, *popen, *pclip)
 	if err != nil {
 		return
-	}
-
-	// display results
-	sharenixlib.Println(*psilent, "URL:", url)
-	if len(thumburl) > 0 {
-		sharenixlib.Println(*psilent, "Thumbnail URL:", thumburl)
-	}
-	if len(deleteurl) > 0 {
-		sharenixlib.Println(*psilent, "Deletion URL:", deleteurl)
 	}
 
 	return

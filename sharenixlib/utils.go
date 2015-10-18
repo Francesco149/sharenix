@@ -40,6 +40,16 @@ func DebugPrintln(a ...interface{}) (n int, err error) {
 	return fmt.Println(a...)
 }
 
+// DebugPrintf formats and prints the given text only
+// if ShareNix is compiled with ShareNixDebug = true
+func DebugPrintf(format string, a ...interface{}) (n int, err error) {
+	if !ShareNixDebug {
+		return
+	}
+	fmt.Printf("Debug: ")
+	return fmt.Printf(format, a...)
+}
+
 // IsImage determines if a mime type is an image or not
 func IsImage(mimeType string) bool {
 	switch mimeType {

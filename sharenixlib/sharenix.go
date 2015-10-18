@@ -26,6 +26,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/BurntSushi/xgb"
 	"github.com/conformal/gotk3/gdk"
 	"github.com/conformal/gotk3/glib"
 	"github.com/conformal/gotk3/gtk"
@@ -43,7 +44,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.2.1a"
+	ShareNixVersion = "ShareNix 0.2.2a"
 )
 
 const (
@@ -168,9 +169,14 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	res *http.Response, file string, err error) {
 
 	Println(silent, "Taking screenshot...")
+	X, err := xgb.NewConn()
+	if err != nil {
+		return
+	}
+	defer X.Close()
 
 	// capture screen
-	img, err := CaptureScreen()
+	img, err := CaptureScreen(X)
 	if err != nil {
 		return
 	}
@@ -333,7 +339,9 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		u/url: shorten url
 	site: name of the target site
 	silent: disables all console output except errors if enabled
-	notification: displays a gtk notification if enabled
+	notification: displays a gtk notification if enabled. note that dimissing 
+	              this notification will force quit the process and the function
+	              will never return.
 	open: automatically opens the uploaded file in the default browser
 	copyurl: stores the url in the clipboard after uploading
 */
@@ -438,6 +446,15 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	if open && err == nil {
 		err = exec.Command("xdg-open", url).Run()
+	}
+
+	// display results
+	Println(silent, "URL:", url)
+	if len(thumburl) > 0 {
+		Println(silent, "Thumbnail URL:", thumburl)
+	}
+	if len(deleteurl) > 0 {
+		Println(silent, "Deletion URL:", deleteurl)
 	}
 
 	if notification {

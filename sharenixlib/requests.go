@@ -75,9 +75,12 @@ func SniffMimeType(filePath string) (string, error) {
 
 	// first 512 bytes are used to evaluate mime type
 	first512 := make([]byte, 512)
-	file.Read(first512)
+	n, err := file.Read(first512)
+	if err != nil {
+		return "", err
+	}
 
-	return http.DetectContentType(first512), nil
+	return http.DetectContentType(first512[:n]), nil
 }
 
 // SendFilePostRequest prepares a multipart
