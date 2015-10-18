@@ -42,7 +42,7 @@ Feature progress
 * Basic upload history csv file - done (./sharenix -history)
 * Grep-able upload history output - done (./sharenix -history | grep helloworld)
 * GUI tools for config & history - WIP
-* Upload GTK notification - done
+* Clickable GTK notifications - done
 * Screen recording - WIP
 
 Getting started - Prebuilt binaries
@@ -68,6 +68,17 @@ More info on the regex parsing will be coming soon, but the behaviour is nearly
 the same as ShareX so you could just read through 
 [this section](https://github.com/ShareX/ShareX/wiki/Custom%20Uploader) of 
 the ShareX guide.
+
+Notifications and canceling uploads
+============
+Using the -n flag will enable notifications for uploads in the bottom right 
+corner of your screen.
+
+Right-clicking a "upload in progress" notification will cancel the upload and 
+dismiss the notification.
+
+Right-click a "upload completed" notification will dimiss it, while left 
+clicking the url will open it in your default browser.
 
 Screenshotting areas or windows
 ============
