@@ -32,6 +32,7 @@ import (
 	"github.com/conformal/gotk3/gtk"
 	"github.com/kardianos/osext"
 	"github.com/mvdan/xurls"
+	"html"
 	"image"
 	"image/png"
 	"net/http"
@@ -47,7 +48,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.3.2a"
+	ShareNixVersion = "ShareNix 0.3.3a"
 )
 
 const (
@@ -513,10 +514,16 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	fakeResponseEnd()
 
-	if xurls.Strict.MatchString(url) {
+	url = strings.TrimSuffix(url, "\n")
+	matchedUrls := xurls.Strict.FindAllString(url, -1)
+	urli := xurls.Strict.FindIndex([]byte(url))
+	if len(matchedUrls) == 1 && urli[0] == 0 &&
+		len(url) == len(matchedUrls[0]) {
+		// the result must only contain an url with no extra stuff to be
+		// considered a valid response
 		AppendToHistory(url, thumburl, deleteurl, filename)
 	} else {
-		err = errors.New(fmt.Sprintf("Request failed: %s", url))
+		err = fmt.Errorf("Request failed: %s", url)
 	}
 
 	if copyurl {
@@ -537,13 +544,10 @@ func ShareNix(cfg *Config, mode, site string, silent,
 		Println(silent, "Deletion URL:", deleteurl)
 	}
 
-	DebugPrintf("% 02X\n", url)
-
 	if notification {
 		if err != nil {
-			Notifyf(notifTime, nil, "%v", err)
+			Notifyf(notifTime, nil, html.EscapeString(err.Error()))
 		} else {
-			url = strings.TrimSuffix(url, "\n")
 			Notifyf(notifTime, nil, `<a href="%s">%s</a>`, url, url)
 		}
 	}
