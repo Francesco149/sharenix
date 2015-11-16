@@ -68,8 +68,7 @@ func handleCLI() (err error) {
 		"Quiet mode - disables all terminal output except errors")
 
 	pnotification := flag.Bool("n", false,
-		"(not yet implemented) Notification - "+
-			"displays a GTK notification for the upload")
+		"Notification - displays a GTK notification for the upload")
 
 	popen := flag.Bool("o", false, "Open url - automatically opens the "+
 		"uploaded file's url in the default browser")

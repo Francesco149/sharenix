@@ -35,22 +35,61 @@ import (
 	"image"
 	"image/png"
 	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 )
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.2.2a"
+	ShareNixVersion = "ShareNix 0.3.0a"
 )
 
 const (
 	notifTime    = time.Second * 30
 	infiniteTime = time.Duration(9000000000000000000)
 )
+
+// -----------------------------------------------------------------------------
+// !! WARNING: Ghetto code ahead !!
+
+var server *httptest.Server
+
+// http://keighl.com/post/mocking-http-responses-in-golang/
+// just cause I'm too lazy to add a special case to the output parsing
+// for plugins
+func fakeResponseStart(code int, body string) (*httptest.Server, *http.Client) {
+	server = httptest.NewServer(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(code)
+			w.Header().Set("Content-Type", "plain/text")
+			fmt.Fprintln(w, body)
+		}),
+	)
+
+	transport := &http.Transport{
+		Proxy: func(req *http.Request) (*url.URL, error) {
+			return url.Parse(server.URL)
+		},
+	}
+
+	client := &http.Client{Transport: transport}
+	return server, client
+}
+
+func fakeResponseEnd() {
+	if server != nil {
+		server.Close()
+		server = nil
+	}
+}
+
+// -----------------------------------------------------------------------------
 
 // UploadFile uploads a file
 // cfg: the ShareNix config
@@ -66,9 +105,32 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 		return
 	}
 
+	for i := range sitecfg.Arguments {
+		sitecfg.Arguments[i] = strings.Replace(
+			sitecfg.Arguments[i], "$input$", path, -1)
+	}
+
 	Println(silent, "Uploading file to", sitecfg.Name)
 
-	doThings := func() (*http.Response, string, error) {
+	doThings := func() (res *http.Response, filename string, err error) {
+		if sitecfg.RequestType == "PLUGIN" {
+			var output string
+			output, err = RunPlugin(sitecfg.RequestURL, sitecfg.Arguments)
+			DebugPrintln("RunPlugin returned", len(output), "bytes:",
+				output, "with error", err)
+			if err != nil {
+				return
+			}
+
+			server, client := fakeResponseStart(200, output)
+			res, err = client.Get(server.URL + "/")
+			if err != nil {
+				return
+			}
+
+			filename = filepath.Base(path)
+			return
+		}
 		return SendFilePostRequest(sitecfg.RequestURL,
 			sitecfg.FileFormName, path, sitecfg.Arguments)
 	}
@@ -79,8 +141,11 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 			glib.IdleAdd(w.Destroy)
 			DebugPrintln("Goroutine is exiting")
 		}
-		err = Notifyf(infiniteTime,
+		notiferr := Notifyf(infiniteTime,
 			onload, "Uploading %s to %s...", path, sitecfg.Name)
+		if notiferr != nil {
+			err = notiferr
+		}
 		return
 	}
 	return doThings()
@@ -108,6 +173,14 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 			return SendGetRequest(sitecfg.RequestURL, sitecfg.Arguments)
 		case "POST":
 			return SendPostRequest(sitecfg.RequestURL, sitecfg.Arguments)
+		case "PLUGIN":
+			output, err := RunPlugin(
+				sitecfg.RequestURL, sitecfg.Arguments)
+			if err != nil {
+				return nil, err
+			}
+			server, client := fakeResponseStart(200, output)
+			return client.Get(server.URL + "/")
 		default:
 			return nil, errors.New("Unknown RequestType")
 		}
@@ -339,7 +412,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		u/url: shorten url
 	site: name of the target site
 	silent: disables all console output except errors if enabled
-	notification: displays a gtk notification if enabled. note that dimissing 
+	notification: displays a gtk notification if enabled. note that dimissing
 	              this notification will force quit the process and the function
 	              will never return.
 	open: automatically opens the uploaded file in the default browser
@@ -400,6 +473,11 @@ func ShareNix(cfg *Config, mode, site string, silent,
 		return
 	}
 
+	if res == nil {
+		err = fmt.Errorf("Request failed, but I don't know why!")
+		return
+	}
+
 	switch sitecfg.ResponseType {
 	case "RedirectionURL":
 		DebugPrintln("Getting redirection url...")
@@ -432,6 +510,8 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	default:
 		url = "Unrecognized ResponseType"
 	}
+
+	fakeResponseEnd()
 
 	if xurls.Strict.MatchString(url) {
 		AppendToHistory(url, thumburl, deleteurl, filename)

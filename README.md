@@ -7,6 +7,9 @@
 - [Notifications and canceling uploads](#notifications-and-canceling-uploads)
 - [Screenshotting areas or windows](#screenshotting-areas-or-windows)
 - [Getting started - Building from the source](#getting-started---building-from-the-source)
+- [Plugins](#plugins)
+- [Using a Plugin](#using-a-plugin)
+- [Writing a Plugin](#writing-a-plugin)
 - [Documentation](#documentation)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -35,6 +38,7 @@ Feature progress
 * Automatically open uploads in browser if requested - done (-o flag)
 * Archiving clipboard and screenshot uploads to a local folder - done 
   (saved in ./archive/)
+* Plugin system - done (still very early)
 * Upload multiple files from clipboard - WIP
 * Upload text from clipboard - done
 * URL shortening - done
@@ -180,6 +184,75 @@ to the default site)
 
 	cd $GOPATH/bin
 	./sharenix -m=fs
+	
+Plugins
+============
+Sharenix has a very early form of plugins as of 0.3.0a. Feel free to contact me 
+if you wrote a plugin and want it in this list, but be advised that the plugin 
+specification is still subject to changes.
+* [gweet: Upload to twitter](https://github.com/Francesco149/gweet)
+	
+Using a Plugin
+============
+Plugins come as one executable but might also include some extra files.
+
+Plugin authors are highly advised to provide specific install instructions for 
+their plugin. I will however provide generic guidelines in this section that 
+will usually apply to every plugin to a certain extent.
+
+To install a plugin, all you have to do is copy all the plugin's files to the 
+plugins directory in your sharenix folder (~/.sharenix if you followed the 
+getting started guide). If the plugins directory doesn't exist, create it.
+
+The plugin authors should always provide an example sharenix.json config entry, 
+or at least a list of parameters you can use. For a generic example of a config 
+entry, see the last step of "Writing a Plugin".
+	
+Writing a Plugin
+============
+Sharenix has a very early and basic plugin system that might be subject to 
+changes as the development progress.
+* Each plugin is a stand-alone executable that will be placed in the plugins
+  directory. You can write a plugin in any language you like as long as it 
+  follows the specification.
+* The last line of the combined stdout & stderr output is used and parsed as 
+  the plugin's output.
+* Command-line parameters must be [go-style](https://golang.org/pkg/flag). 
+* The plugin will recieve the sharenix.json Arguments list as command-line 
+  parameters. Additionally, a special _tail parameter can be used to append 
+  anonymous arguments at the end of the argument list.
+* The sharenix.json config entry should have this format: 
+  ```json
+  
+	{
+		"Name": "My Awesome Plugin!",
+		"RequestType": "PLUGIN",
+		"RequestURL": "executable-name",
+		"FileFormName": "",
+		"Arguments": {
+			"_tail": "$input$", 
+			"foo": "bar", 
+			"someflag": "true"
+		},
+		"ResponseType": "Text",
+		"RegexList": [],
+		"URL": "",
+		"ThumbnailURL": "",
+		"DeletionURL": ""
+	}, 
+	
+	```
+		
+	which will call executable-name like so:
+	```bash
+	
+	executable-name -foo=bar -someflag=true /path/to/file or http://url/to/shorten
+	
+	```
+
+I am well aware that this plugin system lacks security, but defending yourself 
+from malicious plugins is not hard. Avoid non-opensource plugins at all costs 
+and if in doubt, ask someone to check a plugin's code or check it yourself.
     
 Documentation
 ============

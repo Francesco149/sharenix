@@ -49,7 +49,9 @@ func SendGetRequest(baseurl string, params map[string]string) (
 }
 
 // SendGetRequest sends a POST request with params
-func SendPostRequest(baseurl string, params map[string]string) (*http.Response, error) {
+func SendPostRequest(baseurl string, params map[string]string) (
+	*http.Response, error) {
+
 	q := url.Values{}
 	for name, value := range params {
 		q.Set(name, value)
