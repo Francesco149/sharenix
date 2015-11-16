@@ -16,11 +16,11 @@
 package sharenixlib
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/kardianos/osext"
 	"os/exec"
 	"path"
-	"bytes"
 )
 
 // GetPluginsDir returns the absolute path to the plugins directory.
