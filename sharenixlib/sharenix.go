@@ -47,7 +47,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.3.0a"
+	ShareNixVersion = "ShareNix 0.3.1a"
 )
 
 const (
@@ -536,6 +536,8 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	if len(deleteurl) > 0 {
 		Println(silent, "Deletion URL:", deleteurl)
 	}
+
+	DebugPrintf("% 02X\n", url)
 
 	if notification {
 		if err != nil {

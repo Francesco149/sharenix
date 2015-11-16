@@ -45,12 +45,11 @@ func GetPluginsDir() (pluginsDir string, err error) {
 // will execute
 // 	foo -hello=world -someflag=true bar
 // Returns the last line outputted to stdout by the plugin and an error if any.
-// Note: strings.Fields() is called on tail, so any extra spaces will be
-// stripped.
+// Any trailing newlines at the end of the output are stripped.
 func RunPlugin(pluginName string,
 	extraParams map[string]string) (output string, err error) {
 
-	formattedArgs := strings.Fields(extraParams["_tail"])
+	formattedArgs := []string{extraParams["_tail"]}
 	delete(extraParams, "_tail")
 	for paramName, paramValue := range extraParams {
 		formattedArgs = append(
@@ -71,7 +70,12 @@ func RunPlugin(pluginName string,
 		err = fmt.Errorf("Plugin did not return any output.")
 		return
 	}
-	split := strings.Split(strings.TrimSuffix(string(outdata), "\n"), "\n")
-	output = split[len(split)-1]
+	output = strings.TrimRight(string(outdata), "\n")
+	ilastline := strings.LastIndex(output, "\n")
+	if ilastline != -1 {
+		output = output[ilastline+1:]
+	} else {
+		DebugPrintln("Plugin output was one line long")
+	}
 	return
 }
