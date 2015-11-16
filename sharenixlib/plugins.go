@@ -20,7 +20,7 @@ import (
 	"github.com/kardianos/osext"
 	"os/exec"
 	"path"
-	"strings"
+	"bytes"
 )
 
 // GetPluginsDir returns the absolute path to the plugins directory.
@@ -70,12 +70,13 @@ func RunPlugin(pluginName string,
 		err = fmt.Errorf("Plugin did not return any output.")
 		return
 	}
-	output = strings.TrimRight(string(outdata), "\n")
-	ilastline := strings.LastIndex(output, "\n")
+	outdata = bytes.TrimSuffix(outdata, []byte{0x0A})
+	ilastline := bytes.LastIndex(outdata, []byte{0x0A})
 	if ilastline != -1 {
-		output = output[ilastline+1:]
+		outdata = outdata[ilastline+1:]
 	} else {
 		DebugPrintln("Plugin output was one line long")
 	}
+	output = string(outdata)
 	return
 }

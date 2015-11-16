@@ -47,7 +47,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.3.1a"
+	ShareNixVersion = "ShareNix 0.3.2a"
 )
 
 const (
@@ -543,6 +543,7 @@ func ShareNix(cfg *Config, mode, site string, silent,
 		if err != nil {
 			Notifyf(notifTime, nil, "%v", err)
 		} else {
+			url = strings.TrimSuffix(url, "\n")
 			Notifyf(notifTime, nil, `<a href="%s">%s</a>`, url, url)
 		}
 	}
