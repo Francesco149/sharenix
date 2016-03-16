@@ -48,7 +48,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.3.3a"
+	ShareNixVersion = "ShareNix 0.3.4a"
 )
 
 const (
@@ -175,8 +175,7 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 		case "POST":
 			return SendPostRequest(sitecfg.RequestURL, sitecfg.Arguments)
 		case "PLUGIN":
-			output, err := RunPlugin(
-				sitecfg.RequestURL, sitecfg.Arguments)
+			output, err := RunPlugin(sitecfg.RequestURL, sitecfg.Arguments)
 			if err != nil {
 				return nil, err
 			}
@@ -269,12 +268,37 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	err = png.Encode(tmpfile, img)
 	tmpfile.Close()
 
+	// TODO: avoid repeating this loop in every upload function and move
+	// it to its own func
+	for i := range sitecfg.Arguments {
+		sitecfg.Arguments[i] = strings.Replace(
+			sitecfg.Arguments[i], "$input$", afilepath, -1)
+	}
+
 	// upload
 	Println(silent, "Uploading to", sitecfg.Name)
 
+	// TODO: make a more generic version of this switch to avoid repeating
+	// this code over and over
 	doThings := func() (*http.Response, string, error) {
-		return SendFilePostRequest(sitecfg.RequestURL, sitecfg.FileFormName,
-			afilepath, sitecfg.Arguments)
+		switch sitecfg.RequestType {
+		case "GET":
+			return nil, "", errors.New("GET file upload is not supported.")
+		case "POST":
+			return SendFilePostRequest(sitecfg.RequestURL, sitecfg.FileFormName,
+				afilepath, sitecfg.Arguments)
+		case "PLUGIN":
+			output, err := RunPlugin(
+				sitecfg.RequestURL, sitecfg.Arguments)
+			if err != nil {
+				return nil, "", err
+			}
+			server, client := fakeResponseStart(200, output)
+			res, err := client.Get(server.URL + "/")
+			return res, filepath.Base(afilepath), err
+		default:
+			return nil, "", errors.New("Unknown RequestType")
+		}
 	}
 
 	if notif {
@@ -311,6 +335,8 @@ func CreateArchiveFile(extension string) (
 func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	res *http.Response, filename string, err error) {
 
+	defaultConfig := sitecfg.Name == cfg.DefaultFileUploader
+
 	clipboard, err := GetClipboard()
 	if err != nil {
 		return
@@ -344,7 +370,9 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 
 		DebugPrintln("Trying to parse as URL...")
 		if xurls.Strict.MatchString(selectionstr) {
-			sitecfg = cfg.GetServiceByName(cfg.DefaultUrlShortener)
+			if defaultConfig {
+				sitecfg = cfg.GetServiceByName(cfg.DefaultUrlShortener)
+			}
 			res, err = ShortenUrl(cfg, sitecfg,
 				selectionstr, silent, notif)
 			filename = selectionstr

@@ -67,14 +67,11 @@ func (cfg *Config) Parse(mode string, site string, silent bool) (
 
 	if site == "default" {
 		switch mode {
-		case "f", "file":
+		case "f", "file", "c", "clipboard":
 			site = cfg.DefaultFileUploader
 
 		case "fs", "fullscreen":
 			site = cfg.DefaultImageUploader
-
-		case "c", "clipboard":
-			site = cfg.DefaultFileUploader
 
 		case "u", "url":
 			site = cfg.DefaultUrlShortener
