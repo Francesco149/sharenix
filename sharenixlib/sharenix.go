@@ -48,7 +48,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.3.5a"
+	ShareNixVersion = "ShareNix 0.3.6a"
 )
 
 const (
@@ -100,6 +100,11 @@ func fakeResponseEnd() {
 // notif: if true, a notification will display during and after the request
 func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 	silent, notif bool) (res *http.Response, filename string, err error) {
+
+	// this hack fixes "invalid argument" when there's leftover zero bytes
+	// in the paths
+	// TODO: use better gtk bindings that don't leave nil bytes
+	path = string(bytes.TrimRight([]byte(path), "\000"))
 
 	sitecfg, err = cfg.HandleFileType(sitecfg, path, silent)
 	if err != nil {
