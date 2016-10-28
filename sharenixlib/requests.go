@@ -71,7 +71,7 @@ func escapeQuotes(s string) string {
 func SniffMimeType(filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("SniffMimeType failed to open file: %s", err)
 	}
 	defer file.Close()
 

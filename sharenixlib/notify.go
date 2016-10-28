@@ -81,7 +81,7 @@ func lockEnd(index int) (err error) {
 func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
 	a ...interface{}) (err error) {
 
-	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	win, err := gtk.WindowNew(gtk.WINDOW_POPUP)
 	if err != nil {
 		return
 	}
@@ -116,7 +116,7 @@ func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
 	// PANGO_ELLIPSIZE_END automatically limits the text length when the
 	// window is resized and appends ... at the end
 	notiftext := fmt.Sprintf(
-		"<small><b>ShareNix: "+format+"</b></small>", a...)
+		"ShareNix: "+format, a...)
 	l.SetSingleLineMode(true)
 	l.SetMaxWidthChars(60) // workaround for a positioning bug, see below
 	l.SetEllipsize(pango.ELLIPSIZE_END)
