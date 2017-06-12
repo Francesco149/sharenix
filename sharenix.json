@@ -1,19 +1,19 @@
 {
-	"DefaultFileUploader": "hnng.moe (file upload)",
-	"DefaultImageUploader": "imgur.com",
-	"DefaultUrlShortener": "hnng.moe (url shortener)",
+    "DefaultFileUploader": "hnng.moe (file upload)",
+    "DefaultImageUploader": "imgur.com",
+    "DefaultUrlShortener": "hnng.moe (url shortener)",
 
-	"Services": [
-		{
-			"Name": "hnng.moe (url shortener)",
-			"RequestType": "GET",
-			"RequestURL": "http://www.hnng.moe/shortapi.php",
-			"Arguments": {
-				"url": "$input$"
-			},
-			"ResponseType": "Text",
-			"RegexList": []
-		},
+    "Services": [
+        {
+            "Name": "hnng.moe (url shortener)",
+            "RequestType": "GET",
+            "RequestURL": "http://www.hnng.moe/shortapi.php",
+            "Arguments": {
+                "url": "$input$"
+            },
+            "ResponseType": "Text",
+            "RegexList": []
+        },
         {
             "Name": "hnng.moe (file upload)",
             "RequestType": "POST",
@@ -31,12 +31,12 @@
             },
             "RequestURL": "https://api.imgur.com/3/image",
             "FileFormName": "image",
-			"Arguments": {
-				"type": "file"
-			},
+            "Arguments": {
+                "type": "file"
+            },
             "ResponseType": "Text",
             "URL": "$json:data.link$",
             "DeletionURL": "https://imgur.com/delete/$json:data.deletehash$"
         }
-	]
+    ]
 }
