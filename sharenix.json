@@ -1,18 +1,19 @@
 {
     "DefaultFileUploader": "hnng.moe (file upload)",
     "DefaultImageUploader": "imgur.com",
-    "DefaultUrlShortener": "hnng.moe (url shortener)",
+    "DefaultUrlShortener": "waa.ai",
 
     "Services": [
         {
-            "Name": "hnng.moe (url shortener)",
+            "Name": "waa.ai",
             "RequestType": "GET",
-            "RequestURL": "http://www.hnng.moe/shortapi.php",
+            "RequestURL": "https://api.waa.ai/shorten",
             "Arguments": {
                 "url": "$input$"
             },
             "ResponseType": "Text",
-            "RegexList": []
+            "URL": "$json:data.url$",
+            "DeletionURL": "$json:data.delete_link$"
         },
         {
             "Name": "hnng.moe (file upload)",
