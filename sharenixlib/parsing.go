@@ -16,9 +16,16 @@
 package sharenixlib
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"github.com/ChrisTrenkamp/goxpath"
+	"github.com/ChrisTrenkamp/goxpath/tree/xmltree"
+	"github.com/NodePrime/jsonpath"
 	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
 	"unicode"
 )
 
@@ -110,9 +117,70 @@ func parseRegexSyntax(text string, regexResults [][]string) string {
 	return match[0]
 }
 
-// ParseUrl replaces $n$ and $n,n$ tags in the given url with the
-// proper regex matches
-func ParseUrl(url string, regexResults [][]string) string {
+func parseJsonSyntax(syntax string, jsonblob []byte) string {
+	paths, err := jsonpath.ParsePaths("$." + syntax + "+")
+	if err != nil {
+		DebugPrintln(err)
+		return "(invalid jsonpath)" // TODO: throw errors
+	}
+
+	eval, err := jsonpath.EvalPathsInBytes(jsonblob, paths)
+	if err != nil {
+		DebugPrintln(err)
+		return "(invalid json)"
+	}
+
+	result, ok := eval.Next()
+	if !ok || eval.Error != nil {
+		DebugPrintln(eval.Error)
+		return "(jsonpath not found)"
+	}
+
+	DebugPrintln(string(jsonblob))
+	DebugPrintln(result.Pretty(true))
+
+	var val interface{}
+	err = json.Unmarshal(result.Value, &val)
+	if err != nil {
+		DebugPrintln(err)
+		return "(failed to parse json value)"
+	}
+
+	return fmt.Sprintf("%v", val)
+}
+
+func parseXmlSyntax(syntax string, xml []byte) string {
+	xpExec, err := goxpath.Parse(syntax)
+	if err != nil {
+		return "(invalid xpath)"
+	}
+
+	xTree, err := xmltree.ParseXML(bytes.NewBuffer(xml))
+	if err != nil {
+		return "(invalid xml)"
+	}
+
+	res, err := xpExec.Exec(xTree)
+	if err != nil {
+		return "(xpath not found)"
+	}
+
+	return res.String()
+}
+
+const (
+	_ = iota
+	ParseRegex
+	ParseJson
+	ParseXml
+)
+
+// ParseUrl replaces the following syntaxes in url and returns the
+// modified string.
+// - regex matches: $regex:n,n$, $regex:n$, $n,n$, $n$
+// - json paths: $json:some.json.element$
+// - xml xpaths: $xml:/root/some/xml/element$
+func ParseUrl(response []byte, url string, regexResults [][]string) string {
 	// 1:1 port of ShareX's code to achieve the closest similarity in behaviour
 
 	if len(url) == 0 {
@@ -121,28 +189,53 @@ func ParseUrl(url string, regexResults [][]string) string {
 
 	urlRunes := []rune(url)
 	resultRunes := make([]rune, 0)
-	regexStart := false
-	regexStartIndex := 0
+
+	syntaxStart := false
+	parseType := ParseRegex
+	syntaxStartIndex := 0
 
 	for i := 0; i < len(urlRunes); i++ {
 		if urlRunes[i] == rune('$') {
-			if !regexStart {
-				regexStart = true
-				regexStartIndex = i
-			} else {
-				syntax := string(urlRunes[regexStartIndex+1 : i])
-				regexResult := parseRegexSyntax(syntax, regexResults)
+			if !syntaxStart {
+				syntaxStart = true
 
-				if len(regexResult) != 0 {
-					resultRunes = append(resultRunes, []rune(regexResult)...)
+				syntaxCheck := strings.ToLower(string(urlRunes[i+1:]))
+
+				if strings.HasPrefix(syntaxCheck, "regex:") {
+					parseType = ParseRegex
+					syntaxStartIndex = i + 7
+				} else if strings.HasPrefix(syntaxCheck, "json:") {
+					parseType = ParseJson
+					syntaxStartIndex = i + 6
+				} else if strings.HasPrefix(syntaxCheck, "xml:") {
+					parseType = ParseXml
+					syntaxStartIndex = i + 5
+				} else {
+					syntaxStartIndex = i + 1
+				}
+			} else {
+				parseText :=
+					strings.TrimSpace(string(urlRunes[syntaxStartIndex:i]))
+
+				if len(parseText) != 0 {
+					var parseRes string
+
+					switch parseType {
+					default:
+					case ParseRegex:
+						parseRes = parseRegexSyntax(parseText, regexResults)
+					case ParseJson:
+						parseRes = parseJsonSyntax(parseText, response)
+					case ParseXml:
+						parseRes = parseXmlSyntax(parseText, response)
+					}
+
+					resultRunes = append(resultRunes, []rune(parseRes)...)
 				}
 
-				regexStart = false
-				continue
+				syntaxStart = false
 			}
-		}
-
-		if !regexStart {
+		} else if !syntaxStart {
 			resultRunes = append(resultRunes, urlRunes[i])
 		}
 	}

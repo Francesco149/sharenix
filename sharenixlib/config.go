@@ -18,15 +18,16 @@ package sharenixlib
 // A SiteConfig holds the json ShareX config for a single site
 type SiteConfig struct {
 	Name         string
-	RequestType  string
+	RequestType  string            `json:",omitempty"`
+	Headers      map[string]string `json:",omitempty"`
 	RequestURL   string
-	FileFormName string
-	Arguments    map[string]string
+	FileFormName string            `json:",omitempty"`
+	Arguments    map[string]string `json:",omitempty"`
 	ResponseType string
-	RegexList    []string
-	URL          string
-	ThumbnailURL string
-	DeletionURL  string
+	RegexList    []string `json:",omitempty"`
+	URL          string   `json:",omitempty"`
+	ThumbnailURL string   `json:",omitempty"`
+	DeletionURL  string   `json:",omitempty"`
 }
 
 // A Config holds the json ShareX config for all sites plus the default upload

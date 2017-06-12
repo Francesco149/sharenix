@@ -1,37 +1,42 @@
 {
-	"DefaultFileUploader": "hnng.moe (file upload)", 
-	"DefaultImageUploader": "hnng.moe (file upload)", 
-	"DefaultUrlShortener": "hnng.moe (url shortener)", 
-	
+	"DefaultFileUploader": "hnng.moe (file upload)",
+	"DefaultImageUploader": "imgur.com",
+	"DefaultUrlShortener": "hnng.moe (url shortener)",
+
 	"Services": [
 		{
 			"Name": "hnng.moe (url shortener)",
 			"RequestType": "GET",
 			"RequestURL": "http://www.hnng.moe/shortapi.php",
-			"FileFormName": "",
 			"Arguments": {
 				"url": "$input$"
 			},
 			"ResponseType": "Text",
-			"RegexList": [],
-			"URL": "",
-			"ThumbnailURL": "",
-			"DeletionURL": ""
-		}, 
-		{
-			"Name": "hnng.moe (file upload)",
-			"RequestType": "POST",
-			"RequestURL": "http://www.hnng.moe/upload_d.php",
-			"FileFormName": "file",
-			"Arguments": {},
-			"ResponseType": "Text",
-			"RegexList": [
-				"\\\"url\\\":\\\"(.+?)\\\"",
-				"\\\"deletelink\\\":\\\"(.+?)\\\""
-			],
-			"URL": "$1,1$",
-			"ThumbnailURL": "",
-			"DeletionURL": "$2,1$"
-		}
+			"RegexList": []
+		},
+        {
+            "Name": "hnng.moe (file upload)",
+            "RequestType": "POST",
+            "RequestURL": "http://www.hnng.moe/upload_d.php",
+            "FileFormName": "file",
+            "ResponseType": "Text",
+            "URL": "$json:url$",
+            "DeletionURL": "$json:deletelink$"
+        },
+        {
+            "Name": "imgur.com",
+            "RequestType": "POST",
+            "Headers": {
+                "Authorization": "Client-ID b972ecca954f246"
+            },
+            "RequestURL": "https://api.imgur.com/3/image",
+            "FileFormName": "image",
+			"Arguments": {
+				"type": "file"
+			},
+            "ResponseType": "Text",
+            "URL": "$json:data.link$",
+            "DeletionURL": "https://imgur.com/delete/$json:data.deletehash$"
+        }
 	]
 }

@@ -48,7 +48,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.3.6a"
+	ShareNixVersion = "ShareNix 0.4.0a"
 )
 
 const (
@@ -138,7 +138,8 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 			return
 		}
 		return SendFilePostRequest(sitecfg.RequestURL,
-			sitecfg.FileFormName, path, sitecfg.Arguments)
+			sitecfg.FileFormName, path, sitecfg.Arguments,
+			sitecfg.Headers)
 	}
 
 	if notif {
@@ -291,7 +292,7 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 			return nil, "", errors.New("GET file upload is not supported.")
 		case "POST":
 			return SendFilePostRequest(sitecfg.RequestURL, sitecfg.FileFormName,
-				afilepath, sitecfg.Arguments)
+				afilepath, sitecfg.Arguments, sitecfg.Headers)
 		case "PLUGIN":
 			output, err := RunPlugin(
 				sitecfg.RequestURL, sitecfg.Arguments)
@@ -532,10 +533,10 @@ func ShareNix(cfg *Config, mode, site string, silent,
 			return
 		}
 
-		// replace regular expression tags in urls
-		url = ParseUrl(sitecfg.URL, results)
-		thumburl = ParseUrl(sitecfg.ThumbnailURL, results)
-		deleteurl = ParseUrl(sitecfg.DeletionURL, results)
+		// replace regular expressions and other tags in urls
+		url = ParseUrl(rbody.Bytes(), sitecfg.URL, results)
+		thumburl = ParseUrl(rbody.Bytes(), sitecfg.ThumbnailURL, results)
+		deleteurl = ParseUrl(rbody.Bytes(), sitecfg.DeletionURL, results)
 
 		// empty url = take entire response as url
 		if len(url) == 0 {

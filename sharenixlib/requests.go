@@ -88,8 +88,8 @@ func SniffMimeType(filePath string) (string, error) {
 // SendFilePostRequest prepares a multipart
 // file upload POST request and sends it
 func SendFilePostRequest(url, fileParamName, filePath string,
-	extraParams map[string]string) (res *http.Response,
-	filename string, err error) {
+	extraParams map[string]string, extraHeaders map[string]string,
+) (res *http.Response, filename string, err error) {
 
 	filename = filepath.Base(filePath)
 
@@ -115,6 +115,7 @@ func SendFilePostRequest(url, fileParamName, filePath string,
 		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
 			escapeQuotes(fileParamName), escapeQuotes(filename)))
 	h.Set("Content-Type", realmime)
+
 	formfile, err := w.CreatePart(h)
 	if err != nil {
 		return
@@ -146,9 +147,14 @@ func SendFilePostRequest(url, fileParamName, filePath string,
 	// set type & boundary
 	req.Header.Set("Content-Type", w.FormDataContentType())
 
+	// extra headers
+	for hname, hval := range extraHeaders {
+		req.Header.Set(hname, hval)
+	}
+
 	// send request
 	client := &http.Client{}
-	DebugPrintln(req.URL, extraParams)
+	DebugPrintln(req.URL, extraParams, extraHeaders)
 	res, err = client.Do(req)
 	return
 }

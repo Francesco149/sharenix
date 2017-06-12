@@ -131,6 +131,10 @@ like so:
 
 Getting started - Building from the source
 ============
+NOTE: this codebase is quite outdated (it was written back in go 1.4 or
+something like that. I don't plan on refactoring the code for now. If you
+encounter issues while trying to compile it, please downgrade to go 1.7.1 or earlier.
+
 Before we start building ShareNix, you will need to set up a few dependencies.
 * Make sure that you have >=gtk-3.10 and >=gdk-3.10. 
 * Get the dev headers for glib, cairo, pango and gtk3. On Ubuntu 15.04, the 
