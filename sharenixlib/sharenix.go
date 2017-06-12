@@ -48,7 +48,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.4.1a"
+	ShareNixVersion = "ShareNix 0.4.2a"
 )
 
 const (
@@ -351,6 +351,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	res *http.Response, filename string, newsitecfg *SiteConfig, err error) {
 
 	defaultConfig := sitecfg.Name == cfg.DefaultFileUploader
+	newsitecfg = sitecfg
 
 	clipboard, err := GetClipboard()
 	if err != nil {
@@ -391,6 +392,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 			res, err = ShortenUrl(cfg, sitecfg,
 				selectionstr, silent, notif)
 			filename = selectionstr
+			newsitecfg = sitecfg
 			return
 		}
 
