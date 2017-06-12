@@ -63,10 +63,12 @@ they aren't pure Go libraries.
 
 Once you have the binaries, unzip them in a folder and run sharenix like so:
 
-    tar -zxvf sharenix-linux-amd64.tar.gz
-    mv sharenix-linux-amd64 ~/.sharenix
-    cd ~/.sharenix
-    ./sharenix -h
+```bash
+tar -zxvf sharenix-linux-amd64.tar.gz
+mv sharenix-linux-amd64 ~/.sharenix
+cd ~/.sharenix
+./sharenix -h
+```
 
 You can now set-up sharenix any way you like: bind it to hotkeys, symlink it
 in /usr/bin to launch it from your terminal, and so on.
@@ -97,33 +99,37 @@ Remember to replace loli with your username.
 
 sharenix-section.sh
 
-    #!/bin/sh
+```bash
+#!/bin/sh
 
-    # take a screenshot using gnome-screenshot
-    sharenixtmp=$(mktemp /tmp/nicememe.XXXXXXXXXXXXXXXXXXX.png)
-    xclip -i -selection clipboard -t text/uri-list $sharenixtmp
-    gnome-screenshot -a -f $sharenixtmp
+# take a screenshot using gnome-screenshot
+sharenixtmp=$(mktemp /tmp/nicememe.XXXXXXXXXXXXXXXXXXX.png)
+xclip -i -selection clipboard -t text/uri-list $sharenixtmp
+gnome-screenshot -a -f $sharenixtmp
 
-    # check file size (0 bytes means that gnome-screenshot was cancelled)
-    sharenixtmpsize=$(wc -c <"$sharenixtmp")
-    if [ $sharenixtmpsize != 0 ]; then
-        /home/loli/.sharenix/sharenix -n $sharenixtmp
-    fi
+# check file size (0 bytes means that gnome-screenshot was cancelled)
+sharenixtmpsize=$(wc -c <"$sharenixtmp")
+if [ $sharenixtmpsize != 0 ]; then
+    /home/loli/.sharenix/sharenix -n $sharenixtmp
+fi
+```
 
 sharenix-window.sh
 
-    #!/bin/sh
+```bash
+#!/bin/sh
 
-    # take a screenshot using gnome-screenshot
-    sharenixtmp=$(mktemp /tmp/nicememe.XXXXXXXXXXXXXXXXXXX.png)
-    xclip -i -selection clipboard -t text/uri-list $sharenixtmp
-    gnome-screenshot -w -f $sharenixtmp
+# take a screenshot using gnome-screenshot
+sharenixtmp=$(mktemp /tmp/nicememe.XXXXXXXXXXXXXXXXXXX.png)
+xclip -i -selection clipboard -t text/uri-list $sharenixtmp
+gnome-screenshot -w -f $sharenixtmp
 
-    # check file size (0 bytes means that gnome-screenshot was cancelled)
-    sharenixtmpsize=$(wc -c <"$sharenixtmp")
-    if [ $sharenixtmpsize != 0 ]; then
-        /home/loli/.sharenix/sharenix -n $sharenixtmp
-    fi
+# check file size (0 bytes means that gnome-screenshot was cancelled)
+sharenixtmpsize=$(wc -c <"$sharenixtmp")
+if [ $sharenixtmpsize != 0 ]; then
+    /home/loli/.sharenix/sharenix -n $sharenixtmp
+fi
+```
 
 Now you can bind these scripts to hotkeys using whatever configuration
 your DE/Window Manager has.
@@ -136,7 +142,7 @@ Settings Manager under commands like so:
 ![](http://hnng.moe/f/3CR)
 
 JWM example config (```~/.jwmrc```):
-```
+```xml
     <Key mask="CS" key="2">exec:sharenix -m="fs" -n -o</Key>
     <Key mask="CS" key="3">exec:/path/to/sharenix-window.sh</Key>
     <Key mask="CS" key="4">exec:/path/to/sharenix-section.sh</Key>
