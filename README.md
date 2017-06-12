@@ -32,6 +32,9 @@ Feature progress
 * Parsing ShareX's json config - done
 * Parsing regexp tags - done (no named groups)
 * Parsing tags in the parameters - done
+* JSON syntax ```$json:some.json.field$``` - done
+* XML syntax ```$xml:/root/some/xml/field$``` - done (untested)
+* Custom Headers - done
 * File upload - done (./sharenix path/to/file)
 * Full-screen screenshot - done (./sharenix -m=fs)
 * Upload files and images from clipboard - done (./sharenix -m=c)
@@ -71,7 +74,7 @@ Check out the sharenix.json config file for the example configuration (which
 works out of the box and uploads to my file sharing service at hnng.moe).
 More info on the regex parsing will be coming soon, but the behaviour is nearly 
 the same as ShareX so you could just read through 
-[this section](https://github.com/ShareX/ShareX/wiki/Custom%20Uploader) of 
+[this section](https://getsharex.com/docs/custom-uploader) of 
 the ShareX guide.
 
 Notifications and canceling uploads
@@ -163,6 +166,8 @@ Before we start building ShareNix, you will need to set up a few dependencies.
 		go get github.com/BurntSushi/xgb
 		go get github.com/kardianos/osext
 		go get github.com/mvdan/xurls
+		go get github.com/ChrisTrenkamp/goxpath
+		go get github.com/NodePrime/jsonpath
 
 Once you've done that, all that's left is to clone the repository.
 Make sure that you have git and go installed and run
