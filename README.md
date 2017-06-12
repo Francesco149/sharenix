@@ -124,13 +124,43 @@ sharenix-window.sh
 	if [ $sharenixtmpsize != 0 ]; then
 		/home/loli/.sharenix/sharenix -n $sharenixtmp
 	fi
+
+Now you can bind these scripts to hotkeys using whatever configuration
+your DE/Window Manager has.
 	
-You can bind them to hotkeys in CompizConfig Settings Manager under commands 
-like so:
+On ubuntu and similar distros, you can bind them to hotkeys in CompizConfig
+Settings Manager under commands like so:
 
 ![](http://hnng.moe/f/3CQ)
 
 ![](http://hnng.moe/f/3CR)
+
+JWM example config (```~/.jwmrc```):
+```
+    <Key mask="CS" key="2">exec:sharenix -m="fs" -n -o</Key>
+    <Key mask="CS" key="3">exec:/path/to/sharenix-window.sh</Key>
+    <Key mask="CS" key="4">exec:/path/to/sharenix-section.sh</Key>
+    <Key mask="CS" key="5">exec:sharenix -m="c" -n</Key>
+    <Key mask="CS" key="i">exec:sharenix -m="c" -n -s="twitter (gweet)"</Key>
+```
+
+i3wm example config (```~/.i3/config```):
+```
+bindsym Ctrl+Shift+2 exec sharenix -m="fs" -n -o
+bindsym Ctrl+Shift+3 exec /path/to/sharenix-window.sh
+bindsym Ctrl+Shift+4 exec /path/to/sharenix-section.sh
+bindsym Ctrl+Shift+5 exec sharenix -m="c" -n
+bindsym Ctrl+Shift+i exec sharenix -m="c" -s="twitter" -n
+```
+
+fluxbox example config (```~/.fluxbox/keys```):
+```
+Control Shift 2 :Exec sharenix -m="fs" -n -o
+Control Shift 3 :Exec /home/loli/scr/sharenix-window.sh
+Control Shift 4 :Exec /home/loli/scr/sharenix-section.sh
+Control Shift 5 :Exec sharenix -m="c" -n
+Control Shift i :Exec sharenix -m="c" -n -s="twitter (gweet)"
+```
 
 Getting started - Building from the source
 ============
