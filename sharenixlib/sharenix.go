@@ -48,7 +48,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.4.0a"
+	ShareNixVersion = "ShareNix 0.4.1a"
 )
 
 const (
@@ -99,13 +99,15 @@ func fakeResponseEnd() {
 // silent: disables all console output except errors
 // notif: if true, a notification will display during and after the request
 func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
-	silent, notif bool) (res *http.Response, filename string, err error) {
+	silent, notif bool) (
+	res *http.Response, filename string, newsitecfg *SiteConfig, err error) {
 
 	// this hack fixes "invalid argument" when there's leftover zero bytes
 	// in the paths
 	// TODO: use better gtk bindings that don't leave nil bytes
 	path = string(bytes.TrimRight([]byte(path), "\000"))
 
+	newsitecfg = sitecfg
 	sitecfg, err = cfg.HandleFileType(sitecfg, path, silent)
 	if err != nil {
 		return
@@ -142,6 +144,8 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 			sitecfg.Headers)
 	}
 
+	newsitecfg = sitecfg
+
 	if notif {
 		onload := func(w *gtk.Window) {
 			res, filename, err = doThings()
@@ -155,7 +159,9 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 		}
 		return
 	}
-	return doThings()
+
+	res, filename, err = doThings()
+	return
 }
 
 // ShortenUrl shortens an url
@@ -245,7 +251,7 @@ func MakeArchiveDir() error {
 // silent: disables all console output except errors
 // notif: if true, a notification will display during and after the request
 func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
-	res *http.Response, file string, err error) {
+	res *http.Response, file string, newsitecfg *SiteConfig, err error) {
 
 	Println(silent, "Taking screenshot...")
 	X, err := xgb.NewConn()
@@ -317,7 +323,10 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 			onload, "Uploading screenshot to %s...", sitecfg.Name)
 		return
 	}
-	return doThings()
+
+	newsitecfg = sitecfg
+	res, file, err = doThings()
+	return
 }
 
 // Creates and opens an archive file with the given extension.
@@ -339,7 +348,7 @@ func CreateArchiveFile(extension string) (
 // silent: disables all console output except errors
 // notif: if true, a notification will display during and after the request
 func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
-	res *http.Response, filename string, err error) {
+	res *http.Response, filename string, newsitecfg *SiteConfig, err error) {
 
 	defaultConfig := sitecfg.Name == cfg.DefaultFileUploader
 
@@ -474,6 +483,9 @@ func ShareNix(cfg *Config, mode, site string, silent,
 		return
 	}
 
+	// TODO: move all sitecfg switches here, the current method
+	//       is a huge mess
+
 	// call the correct upload handler
 	switch mode {
 	case "f", "file":
@@ -481,15 +493,16 @@ func ShareNix(cfg *Config, mode, site string, silent,
 			err = errors.New("No file provided")
 			return
 		}
-		res, filename, err = UploadFile(cfg, sitecfg,
+		res, filename, sitecfg, err = UploadFile(cfg, sitecfg,
 			flag.Args()[0], silent, notification)
 
 	case "fs", "fullscreen":
-		res, filename, err = UploadFullScreen(
+		res, filename, sitecfg, err = UploadFullScreen(
 			cfg, sitecfg, silent, notification)
 
 	case "c", "clipboard":
-		res, filename, err = UploadClipboard(cfg, sitecfg, silent, notification)
+		res, filename, sitecfg, err =
+			UploadClipboard(cfg, sitecfg, silent, notification)
 
 	case "u", "url":
 		if len(flag.Args()) != 1 {
@@ -525,6 +538,8 @@ func ShareNix(cfg *Config, mode, site string, silent,
 		if err != nil {
 			return
 		}
+
+		DebugPrintln(rbody)
 
 		// parse all regular expressions
 		var results [][]string

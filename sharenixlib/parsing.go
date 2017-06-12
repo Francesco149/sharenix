@@ -118,11 +118,16 @@ func parseRegexSyntax(text string, regexResults [][]string) string {
 }
 
 func parseJsonSyntax(syntax string, jsonblob []byte) string {
+	DebugPrintln("jsonblob:", string(jsonblob))
+	DebugPrintln("syntax:", syntax)
+
 	paths, err := jsonpath.ParsePaths("$." + syntax + "+")
 	if err != nil {
 		DebugPrintln(err)
 		return "(invalid jsonpath)" // TODO: throw errors
 	}
+
+	DebugPrintln("paths:", paths)
 
 	eval, err := jsonpath.EvalPathsInBytes(jsonblob, paths)
 	if err != nil {
@@ -132,12 +137,11 @@ func parseJsonSyntax(syntax string, jsonblob []byte) string {
 
 	result, ok := eval.Next()
 	if !ok || eval.Error != nil {
-		DebugPrintln(eval.Error)
+		DebugPrintln("result is", result, "err is", eval.Error)
 		return "(jsonpath not found)"
 	}
 
-	DebugPrintln(string(jsonblob))
-	DebugPrintln(result.Pretty(true))
+	DebugPrintln("jsonpath result:", result.Pretty(true))
 
 	var val interface{}
 	err = json.Unmarshal(result.Value, &val)

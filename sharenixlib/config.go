@@ -127,9 +127,11 @@ func (cfg *Config) HandleFileType(currentsitecfg *SiteConfig,
 	// see if we can find a more suitable site for the filetype
 	switch {
 	// image upload
-	case IsImage(mimeType) && newsite != cfg.DefaultImageUploader:
-		DebugPrintln("Switching to default image uploader")
-		newsite = cfg.DefaultImageUploader
+	case IsImage(mimeType):
+		if newsite != cfg.DefaultImageUploader {
+			DebugPrintln("Switching to default image uploader")
+			newsite = cfg.DefaultImageUploader
+		}
 
 	// not an image - we're handling a file
 	case newsite != cfg.DefaultFileUploader:
