@@ -181,16 +181,8 @@ Before we start building ShareNix, you will need to set up a few dependencies.
   required packages are: libglib2.0-dev, libcairo-dev, libpango1.0-dev
   and libgtk-2-dev.
 * Make sure that you have go >=1.3.1
-* Install my fork of go-gtk by running
 
     go get github.com/mattn/go-gtk/gtk
-    cd "$GOPATH"/src/github.com/mattn/go-gtk/gtk
-    git remote add myfork https://github.com/Francesco149/go-gtk.git
-    git pull myfork
-    git checkout -b clipboard_wait_for_contents
-
-* Get the other required libraries
-
     go get github.com/BurntSushi/xgb
     go get github.com/kardianos/osext
     go get github.com/mvdan/xurls
