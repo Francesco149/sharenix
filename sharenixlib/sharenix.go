@@ -15,10 +15,7 @@
 
 // Package sharenixlib contains the core functionalities of sharenix
 // it can be used to implement custom front-ends for sharenix.
-// NOTE: to compile this, you need >=gtk/gdk-3.10 and >=go-1.3.1
-// You will also need my modified fork of gotk3: github.com/Francesco149/gotk3
-// (go get it then rename it to github.com/conformal/gotk3 so that it can be
-// properly imported)
+// NOTE: to compile this, you need gtk 2.0 and >=go-1.3.1
 package sharenixlib
 
 import (
@@ -27,10 +24,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/BurntSushi/xgb"
-	"github.com/conformal/gotk3/gdk"
-	"github.com/conformal/gotk3/glib"
-	"github.com/conformal/gotk3/gtk"
 	"github.com/kardianos/osext"
+	"github.com/mattn/go-gtk/gdk"
+	"github.com/mattn/go-gtk/glib"
+	"github.com/mattn/go-gtk/gtk"
 	"github.com/mvdan/xurls"
 	"html"
 	"image"
@@ -42,13 +39,15 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"time"
+	"unsafe"
 )
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.4.2a"
+	ShareNixVersion = "ShareNix 0.5.0a"
 )
 
 const (
@@ -353,18 +352,26 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	defaultConfig := sitecfg.Name == cfg.DefaultFileUploader
 	newsitecfg = sitecfg
 
-	clipboard, err := GetClipboard()
-	if err != nil {
-		return
-	}
+	clipboard := GetClipboard()
 
 	// URI list (copied files)
 	DebugPrintln("Looking for URI list...")
-	selectiondata, err := clipboard.WaitForContents(
-		gdk.GdkAtomIntern("x-special/gnome-copied-files", false))
+	selectiondata := clipboard.WaitForContents(
+		gdk.AtomIntern("x-special/gnome-copied-files", false))
 
-	if err == nil {
-		selectionstr := string(selectiondata.GetData())
+	// NOTE: this is supposed to be freed, but we're just not gonna care for now
+	//       because we only call this once anyways
+
+	ptr := selectiondata.GetData()
+
+	if uintptr(ptr) != 0 {
+		var bytes []byte
+		hdr := (*reflect.SliceHeader)(unsafe.Pointer(&bytes))
+		hdr.Data = uintptr(ptr)
+		hdr.Len = selectiondata.GetLength()
+		hdr.Cap = hdr.Len
+
+		selectionstr := string(bytes)
 		DebugPrintln(selectionstr)
 
 		// upload first copied file with UploadFile
@@ -376,12 +383,14 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 				cfg, sitecfg, urilist[0].Path, silent, notif)
 		}
 		DebugPrintln("URI list is empty")
+	} else {
+		DebugPrintln("gtk_selection_data_get_data returned NULL")
 	}
 
 	// Plain text (shorten url or upload as text file)
 	DebugPrintln("Looking for plain text...")
-	selectionstr, err := clipboard.WaitForText()
-	if err == nil && len(selectionstr) > 0 {
+	selectionstr := clipboard.WaitForText()
+	if len(selectionstr) > 0 {
 		DebugPrintln(selectionstr)
 
 		DebugPrintln("Trying to parse as URL...")
@@ -407,18 +416,21 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		tmpfile.Close()
 
 		return UploadFile(cfg, sitecfg, afilepath, silent, notif)
+	} else {
+		DebugPrintln("gtk_clipboard_wait_for_text returned an empty string")
 	}
 
 	// Raw image (copied from an image editor or from the browser)
-	var pixbuf *gdk.Pixbuf
 	DebugPrintln("Looking for copied raw images...")
-	pixbuf, err = clipboard.WaitForImage()
-	if err == nil {
-		DebugPrintln("Colorspace:", int(pixbuf.GetColorspace()), "Channels:",
-			pixbuf.GetNChannels(), "Has Alpha:", pixbuf.GetHasAlpha(), "BPS:",
-			pixbuf.GetBitsPerSample(), "Width:", pixbuf.GetWidth(), "Height:",
-			pixbuf.GetHeight(), "Rowstride:", pixbuf.GetRowstride(),
-			"Byte length:", pixbuf.GetByteLength())
+	pixbuf := clipboard.WaitForImage()
+	if uintptr(unsafe.Pointer(pixbuf.GPixbuf)) != 0 {
+		DebugPrintln("Colorspace:", int(pixbuf.GetColorspace()),
+			"Channels:", pixbuf.GetNChannels(),
+			"Has Alpha:", pixbuf.GetHasAlpha(),
+			"BPS:", pixbuf.GetBitsPerSample(),
+			"Width:", pixbuf.GetWidth(),
+			"Height:", pixbuf.GetHeight(),
+			"Rowstride:", pixbuf.GetRowstride())
 
 		// encode png to archive and upload
 		pixels := pixbuf.GetPixels()
@@ -440,6 +452,8 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		tmpfile.Close()
 
 		return UploadFile(cfg, sitecfg, afilepath, silent, notif)
+	} else {
+		DebugPrintln("gtk_clipboard_wait_for_image returned NULL")
 	}
 
 	err = errors.New("Could not find any supported data in the clipboard")

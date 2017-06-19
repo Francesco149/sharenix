@@ -17,14 +17,15 @@ package sharenixlib
 
 import (
 	"fmt"
-	"github.com/conformal/gotk3/gdk"
-	"github.com/conformal/gotk3/glib"
-	"github.com/conformal/gotk3/gtk"
-	"github.com/conformal/gotk3/pango"
 	"github.com/kardianos/osext"
+	"github.com/mattn/go-gtk/gdk"
+	"github.com/mattn/go-gtk/glib"
+	"github.com/mattn/go-gtk/gtk"
+	"github.com/mattn/go-gtk/pango"
 	"os"
 	"path"
 	"time"
+	"unsafe"
 )
 
 func lockName(index int) string {
@@ -81,10 +82,7 @@ func lockEnd(index int) (err error) {
 func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
 	a ...interface{}) (err error) {
 
-	win, err := gtk.WindowNew(gtk.WINDOW_POPUP)
-	if err != nil {
-		return
-	}
+	win := gtk.NewWindow(gtk.WINDOW_POPUP)
 	win.SetTitle(ShareNixVersion)
 	win.SetDecorated(false)
 	win.SetKeepAbove(true)
@@ -93,34 +91,29 @@ func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
 	lockIndex := 0
 
 	// Handle left/right click
-	win.Connect("button-press-event", func(win *gtk.Window, ev *gdk.Event) {
-		DebugPrintln("button-press-event", ev.Type())
-		if ev.Type() != gdk.BUTTON_PRESS {
-			return
-		}
+	win.Connect("button-press-event", func(ctx *glib.CallbackContext) {
+		DebugPrintln("button-press-event")
 
-		eb := &gdk.EventButton{ev}
-		DebugPrintln("button =", eb.Button())
-		switch eb.Button() {
+		arg := ctx.Args(0)
+		e := *(**gdk.EventButton)(unsafe.Pointer(&arg))
+
+		DebugPrintln("button =", e.Button)
+		switch e.Button {
 		case 3: // right click (single)
 			lockEnd(lockIndex)
 			os.Exit(0)
 		}
 	})
 
-	l, err := gtk.LabelNew("")
-	if err != nil {
-		return
-	}
+	l := gtk.NewLabel("")
 
 	// PANGO_ELLIPSIZE_END automatically limits the text length when the
 	// window is resized and appends ... at the end
-	notiftext := fmt.Sprintf(
-		"ShareNix: "+format, a...)
+	notiftext := fmt.Sprintf("ShareNix: "+format, a...)
 	l.SetSingleLineMode(true)
 	l.SetMaxWidthChars(60) // workaround for a positioning bug, see below
 	l.SetEllipsize(pango.ELLIPSIZE_END)
-	l.SetHAlign(gtk.ALIGN_CENTER)
+	l.Misc.SetAlignment(0.5, 0.5)
 	l.SetPadding(10, 10)
 	l.SetMarkup(notiftext)
 	win.Add(l)
@@ -129,19 +122,10 @@ func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
 	// our window is now the right width for the notification text
 	// (clamped to a max of 60 chars).
 
-	display, err := gdk.DisplayGetDefault()
-	if err != nil {
-		return
-	}
-
-	screen, err := display.GetDefaultScreen()
-	if err != nil {
-		return
-	}
-
 	// calculate notification position so that it doens't overlap other notifs
-	width, height := win.GetSize()
-	y := screen.GetHeight() - height - 10
+	var width, height int
+	win.GetSize(&width, &height)
+	y := gdk.ScreenHeight() - height - 10
 
 	for ; ; lockIndex++ {
 		var free bool
@@ -161,12 +145,12 @@ func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
 		y -= 10
 
 		if y < 0 {
-			y = screen.GetHeight() - height - 10
+			y = gdk.ScreenHeight() - height - 10
 		}
 	}
 
 	// Position window in the bottom right corner of the screen
-	win.Move(screen.GetWidth()-width-10, y)
+	win.Move(gdk.ScreenWidth()-width-10, y)
 
 	// ghetto way to fix the positioning bug when resizing a pango.ELLIPSIZE_END
 	// widget by limiting text width first and then restoring full text after

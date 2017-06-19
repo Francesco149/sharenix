@@ -15,10 +15,7 @@
 
 package main
 
-// NOTE: to compile this, you need >=gtk/gdk-3.10 and >=go-1.3.1
-// You will also need my modified fork of gotk3: github.com/Francesco149/gotk3
-// (go get it then rename it to github.com/conformal/gotk3 so that it can be
-// properly imported)
+// NOTE: to compile this, you need gtk 2.0 and >=go-1.3.1
 
 import (
 	"encoding/json"

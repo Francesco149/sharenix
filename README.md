@@ -57,8 +57,9 @@ Getting started - Prebuilt binaries
 ============
 If you're on amd64 or i386 you can get the pre-built binaries in the release
 section.
-The binaries were built on Ubuntu x64 and should be stand-alone, but make sure
-that you have >=gtk-3.10 and >=gdk-3.10, those are the only dependencies as
+The binaries were built on Ubuntu (oldest ones), Gentoo (most of the newer ones)
+and Sabotage (latest ones) on amd64 and should be stand-alone, but make sure
+that you have gtk 2.0, those are the only dependencies as
 they aren't pure Go libraries.
 
 Once you have the binaries, unzip them in a folder and run sharenix like so:
@@ -171,54 +172,39 @@ Control Shift i :Exec sharenix -m="c" -n -s="twitter (gweet)"
 Getting started - Building from the source
 ============
 NOTE: this codebase is quite outdated (it was written back in go 1.4 or
-something like that. I don't plan on refactoring the code for now. If you
+something like that). I don't plan on refactoring the code for now. If you
 encounter issues while trying to compile it, please downgrade to go 1.7.1 or earlier.
 
 Before we start building ShareNix, you will need to set up a few dependencies.
-* Make sure that you have >=gtk-3.10 and >=gdk-3.10.
-* Get the dev headers for glib, cairo, pango and gtk3. On Ubuntu 15.04, the
+* Make sure that you have gtk 2.0.
+* Get the dev headers for glib, cairo, pango and gtk2. On Ubuntu 15.04, the
   required packages are: libglib2.0-dev, libcairo-dev, libpango1.0-dev
-  and libgtk-3-dev.
+  and libgtk-2-dev.
 * Make sure that you have go >=1.3.1
-* Install my fork of gotk3 by running
+* Install my fork of go-gtk by running
 
-
-        go get -tags gtk_3_10 github.com/Francesco149/gotk3/gtk
-
-
-* Remove the clean gotk3 installation and move my fork of gotk3 to
-  the original gotk3 directory with
-
-
-        rm -r -f $GOPATH/src/github.com/conformal/
-        rm -r $GOPATH/pkg/linux_amd64/github.com/conformal/
-        rm -r $GOPATH/pkg/linux_386/github.com/conformal/
-        mkdir $GOPATH/src/github.com/conformal/
-        mv $GOPATH/src/github.com/Francesco149/gotk3 $GOPATH/src/github.com/conformal/gotk3
-
+    go get github.com/mattn/go-gtk/gtk
+    cd "$GOPATH"/src/github.com/mattn/go-gtk/gtk
+    git remote add myfork https://github.com/Francesco149/go-gtk.git
+    git pull myfork
+    git checkout -b clipboard_wait_for_contents
 
 * Get the other required libraries
 
-        go get github.com/BurntSushi/xgb
-        go get github.com/kardianos/osext
-        go get github.com/mvdan/xurls
-        go get github.com/ChrisTrenkamp/goxpath
-        go get github.com/NodePrime/jsonpath
-
-Once you've done that, all that's left is to clone the repository.
-Make sure that you have git and go installed and run
-
+    go get github.com/BurntSushi/xgb
+    go get github.com/kardianos/osext
+    go get github.com/mvdan/xurls
+    go get github.com/ChrisTrenkamp/goxpath
+    go get github.com/NodePrime/jsonpath
     go get github.com/Francesco149/sharenix
-
 
 You can also manually clone the repository anywhere you want by running
 
     git clone https://github.com/Francesco149/sharenix.git
 
-
 To build sharenix, simply run
 
-    go install -tags gtk_3_10 github.com/Francesco149/sharenix
+    go install github.com/Francesco149/sharenix
 
 and copy the default config file to $GOPATH/bin
 
