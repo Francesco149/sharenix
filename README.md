@@ -182,13 +182,15 @@ Before we start building ShareNix, you will need to set up a few dependencies.
   and libgtk-2-dev.
 * Make sure that you have go >=1.3.1
 
-    go get github.com/mattn/go-gtk/gtk
-    go get github.com/BurntSushi/xgb
-    go get github.com/kardianos/osext
-    go get github.com/mvdan/xurls
-    go get github.com/ChrisTrenkamp/goxpath
-    go get github.com/NodePrime/jsonpath
-    go get github.com/Francesco149/sharenix
+````
+go get github.com/mattn/go-gtk/gtk
+go get github.com/BurntSushi/xgb
+go get github.com/kardianos/osext
+go get github.com/mvdan/xurls
+go get github.com/ChrisTrenkamp/goxpath
+go get github.com/NodePrime/jsonpath
+go get github.com/Francesco149/sharenix
+```
 
 You can also manually clone the repository anywhere you want by running
 
