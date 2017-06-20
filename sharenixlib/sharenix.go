@@ -47,7 +47,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.5.0a"
+	ShareNixVersion = "ShareNix 0.5.1a"
 )
 
 const (
@@ -251,6 +251,8 @@ func MakeArchiveDir() error {
 // notif: if true, a notification will display during and after the request
 func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	res *http.Response, file string, newsitecfg *SiteConfig, err error) {
+
+	newsitecfg = sitecfg
 
 	Println(silent, "Taking screenshot...")
 	X, err := xgb.NewConn()
