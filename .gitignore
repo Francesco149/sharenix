@@ -1,8 +1,6 @@
 *~
 dist
 sharenix
-screentest.go
-screentest
 *.tar.*
 sharenix-*
 *.csv
