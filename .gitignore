@@ -5,3 +5,4 @@ screentest.go
 screentest
 *.tar.*
 sharenix-*
+*.csv
