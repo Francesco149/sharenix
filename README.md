@@ -65,8 +65,8 @@ they aren't pure Go libraries.
 Once you have the binaries, unzip them in a folder and run sharenix like so:
 
 ```bash
-tar -zxvf sharenix-linux-amd64.tar.gz
-mv sharenix-linux-amd64 ~/.sharenix
+tar xvf sharenix-linux-*.tar.xz
+mv sharenix-linux-* ~/.sharenix
 cd ~/.sharenix
 ./sharenix -h
 ```
