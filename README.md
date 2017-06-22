@@ -67,8 +67,8 @@ Once you have the binaries, unzip them in a folder and run sharenix like so:
 ```bash
 tar xvf sharenix-linux-*.tar.xz
 mv sharenix-linux-* ~/.sharenix
-cd ~/.sharenix
-./sharenix -h
+export PATH="$PATH ~/.sharenix"
+sharenix -h
 ```
 
 You can now set-up sharenix any way you like: bind it to hotkeys, symlink it
