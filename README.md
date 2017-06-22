@@ -55,12 +55,11 @@ Feature progress
 
 Getting started - Prebuilt binaries
 ============
-If you're on amd64 or i386 you can get the pre-built binaries in the release
-section.
-The binaries were built on Ubuntu (oldest ones), Gentoo (most of the newer ones)
-and Sabotage (latest ones) on amd64 and should be stand-alone, but make sure
-that you have gtk 2.0, those are the only dependencies as
-they aren't pure Go libraries.
+The newest binaries are statically built against musl libc and
+gtk+2.0 and should require no dependencies. They were compiled on
+64-bit sabotage linux. I will try to provide both amd64 and i386
+build in the releases section, but you should really build it
+from source if you have a couple minutes.
 
 Once you have the binaries, unzip them in a folder and run sharenix like so:
 
