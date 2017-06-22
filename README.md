@@ -66,7 +66,7 @@ Once you have the binaries, unzip them in a folder and run sharenix like so:
 ```bash
 tar xvf sharenix-linux-*.tar.xz
 mv sharenix-linux-* ~/.sharenix
-export PATH="$PATH ~/.sharenix"
+export PATH="$PATH:$HOME/.sharenix"
 sharenix -h
 ```
 
