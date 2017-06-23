@@ -181,6 +181,15 @@ Before we start building ShareNix, you will need to set up a few dependencies.
   and libgtk-2-dev.
 * Make sure that you have go >=1.3.1
 
+It should be possible to automatically get all the dependencies
+by simply running:
+
+```
+go get github.com/Francesco149/sharenix
+```
+
+If you get any errors, try getting the dependencies individually:
+
 ```
 go get github.com/mattn/go-gtk/gtk
 go get github.com/BurntSushi/xgb
