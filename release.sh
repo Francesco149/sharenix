@@ -3,7 +3,8 @@
 git pull origin master
 
 echo -e "\nCompiling and Stripping"
-LDFLAGS="$LDFLAGS -static -s -w $(pkg-config --static --libs gtk+-2.0)"
+LDFLAGS="$LDFLAGS -static -s -w -Wl,--gc-sections"
+LDFLAGS="$LDFLAGS $(pkg-config --static --libs gtk+-2.0)"
 go build --ldflags "-linkmode external -extldflags '$LDFLAGS'"
 
 echo -e "\nPackaging"
