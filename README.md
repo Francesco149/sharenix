@@ -2,10 +2,10 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Feature progress](#feature-progress)
 - [Getting started - Prebuilt binaries](#getting-started---prebuilt-binaries)
 - [Notifications and canceling uploads](#notifications-and-canceling-uploads)
 - [Screenshotting areas or windows](#screenshotting-areas-or-windows)
+- [Feature progress](#feature-progress)
 - [Getting started - Building from the source](#getting-started---building-from-the-source)
 - [Plugins](#plugins)
 - [Using a Plugin](#using-a-plugin)
@@ -26,32 +26,6 @@ you can easily import your settings by pasting them in the Services section of
 sharenix.json.
 
 [Demonstration video](http://hnng.moe/f/3CI).
-
-Feature progress
-============
-* Parsing ShareX's json config - done
-* Parsing regexp tags - done (no named groups)
-* Parsing tags in the parameters - done
-* JSON syntax ```$json:some.json.field$``` - done
-* XML syntax ```$xml:/root/some/xml/field$``` - done (untested)
-* Custom Headers - done
-* File upload - done (./sharenix path/to/file)
-* Full-screen screenshot - done (./sharenix -m=fs)
-* Upload files and images from clipboard - done (./sharenix -m=c)
-* Automatically open uploads in browser if requested - done (-o flag)
-* Archiving clipboard and screenshot uploads to a local folder - done
-  (saved in ~/sharenix/archive/)
-* Plugin system - done (still very early)
-* Upload multiple files from clipboard - WIP
-* Upload text from clipboard - done
-* URL shortening - done
-* Screen region selection - WIP
-* Upload progress bar - WIP
-* Basic upload history csv file - done (./sharenix -history)
-* Grep-able upload history output - done (./sharenix -history | grep helloworld)
-* GUI tools for config & history - WIP
-* Clickable GTK notifications - done (-n flag)
-* Screen recording - WIP
 
 Getting started - Prebuilt binaries
 ============
@@ -156,6 +130,31 @@ Settings Manager under commands like so:
 
 ![](http://hnng.moe/f/3CR)
 
+Feature progress
+============
+* Parsing ShareX's json config - done
+* Parsing regexp tags - done (no named groups)
+* Parsing tags in the parameters - done
+* JSON syntax ```$json:some.json.field$``` - done
+* XML syntax ```$xml:/root/some/xml/field$``` - done (untested)
+* Custom Headers - done
+* File upload - done (./sharenix path/to/file)
+* Full-screen screenshot - done (./sharenix -m=fs)
+* Upload files and images from clipboard - done (./sharenix -m=c)
+* Automatically open uploads in browser if requested - done (-o flag)
+* Archiving clipboard and screenshot uploads to a local folder - done
+  (saved in ~/sharenix/archive/)
+* Plugin system - done (still very early)
+* Upload multiple files from clipboard - WIP
+* Upload text from clipboard - done
+* URL shortening - done
+* Screen region selection - WIP
+* Upload progress bar - WIP
+* Basic upload history csv file - done (./sharenix -history)
+* Grep-able upload history output - done (./sharenix -history | grep helloworld)
+* GUI tools for config & history - WIP
+* Clickable GTK notifications - done (-n flag)
+* Screen recording - WIP
 
 Getting started - Building from the source
 ============
