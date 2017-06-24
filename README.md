@@ -99,7 +99,7 @@ If you have xfce4-screenshooter, you can use
 ```xfce4-screenshooter -r -o "sharenix -n"``` for regions and
 ```xfce4-screenshooter -w -o "sharenix -n"``` for windows.
 
-As a more generic solution, I have written two glue scripts I have included
+As a more generic solution, I have written two glue scripts
 that query xfce4-screenshooter, gnome-screenshot and scrot and automatically
 pass the result to sharenix for uploading.
 
