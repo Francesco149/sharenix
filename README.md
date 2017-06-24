@@ -97,7 +97,7 @@ much any screenshotting tool and pass its image to sharenix.
 
 If you have xfce4-screenshooter, you can use
 ```xfce4-screenshooter -r -o "sharenix -n"``` for regions and
-```xfce4-screenshooter -w -o "sharenix -n"``` for windows (#8).
+```xfce4-screenshooter -w -o "sharenix -n"``` for windows.
 
 As a more generic solution, I have written two glue scripts I have included
 that query xfce4-screenshooter, gnome-screenshot and scrot and automatically
