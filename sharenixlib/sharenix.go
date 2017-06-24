@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.6.0a"
+	ShareNixVersion = "ShareNix 0.6.2a"
 )
 
 const (
@@ -454,8 +454,6 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	var res *http.Response
 	var filename string
 
-	gtk.Init(nil)
-
 	// initial upload mode check
 	sitecfg, err = cfg.Parse(mode, site, silent)
 	if err != nil {
@@ -464,6 +462,20 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	// TODO: move all sitecfg switches here, the current method
 	//       is a huge mess
+
+	requiresgtk := false
+
+	switch mode {
+	case "c", "clipboard", "u", "url":
+		requiresgtk = true
+	}
+
+	requiresgtk = requiresgtk || notification
+	requiresgtk = requiresgtk || copyurl
+
+	if requiresgtk {
+		gtk.Init(nil)
+	}
 
 	// call the correct upload handler
 	switch mode {
