@@ -61,3 +61,14 @@ func GetHistoryCSV() (res string, err error) {
 	res = path.Join(storage, "sharenix.csv")
 	return
 }
+
+// GetPluginsDir returns the absolute path to the plugins directory.
+func GetPluginsDir() (res string, err error) {
+	storage, err := GetStorageDir()
+	if err != nil {
+		return
+	}
+	res = path.Join(storage, "plugins")
+	err = MkDirIfNotExists(res)
+	return
+}

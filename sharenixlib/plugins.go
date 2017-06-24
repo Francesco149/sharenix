@@ -22,17 +22,6 @@ import (
 	"path"
 )
 
-// GetPluginsDir returns the absolute path to the plugins directory.
-func GetPluginsDir() (res string, err error) {
-	storage, err := GetStorageDir()
-	if err != nil {
-		return
-	}
-	res = path.Join(storage, "plugins")
-	err = MkDirIfNotExists(res)
-	return
-}
-
 // RunPlugin starts pluginName in the plugin directory passing command-line
 // params in the following format:
 // 	pluginName -param1Name=param1Value ... -paramXName=paramXValue param_tail
