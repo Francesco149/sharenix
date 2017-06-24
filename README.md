@@ -40,7 +40,7 @@ Feature progress
 * Upload files and images from clipboard - done (./sharenix -m=c)
 * Automatically open uploads in browser if requested - done (-o flag)
 * Archiving clipboard and screenshot uploads to a local folder - done
-  (saved in ./archive/)
+  (saved in ~/sharenix/archive/)
 * Plugin system - done (still very early)
 * Upload multiple files from clipboard - WIP
 * Upload text from clipboard - done
@@ -61,17 +61,17 @@ gtk+2.0 and should require no dependencies. They were compiled on
 build in the releases section, but you should really build it
 from source if you have a couple minutes.
 
-Once you have the binaries, unzip them in a folder and run sharenix like so:
-
 ```bash
 tar xvf sharenix-linux-*.tar.xz
-mv sharenix-linux-* ~/.sharenix
-export PATH="$PATH:$HOME/.sharenix"
+sudo cp sharenix-linux-*/sharenix /bin
+chmod +x /bin/sharenix
+cp sharenix-linux-* ~/.sharenix.json
 sharenix -h
 ```
 
-You can now set-up sharenix any way you like: bind it to hotkeys, symlink it
-in /usr/bin to launch it from your terminal, and so on.
+You can now set-up sharenix any way you like: bind it to hotkeys,
+launch it from your terminal, and so on.
+
 Check out the sharenix.json config file for the example configuration (which
 works out of the box and uploads to my file sharing service at hnng.moe).
 More info on the regex parsing will be coming soon, but the behaviour is nearly
