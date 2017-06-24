@@ -92,11 +92,11 @@ your DE/Window Manager has.
 
 JWM example config (```~/.jwmrc```):
 ```xml
-    <Key mask="CS" key="2">exec:sharenix -m="fs" -n -o</Key>
-    <Key mask="CS" key="3">exec:/path/to/sharenix-window</Key>
-    <Key mask="CS" key="4">exec:/path/to/sharenix-section</Key>
-    <Key mask="CS" key="5">exec:sharenix -m="c" -n</Key>
-    <Key mask="CS" key="i">exec:sharenix -m="c" -n -s="twitter (gweet)"</Key>
+<Key mask="CS" key="2">exec:sharenix -m="fs" -n -o</Key>
+<Key mask="CS" key="3">exec:/path/to/sharenix-window</Key>
+<Key mask="CS" key="4">exec:/path/to/sharenix-section</Key>
+<Key mask="CS" key="5">exec:sharenix -m="c" -n</Key>
+<Key mask="CS" key="i">exec:sharenix -m="c" -n -s="twitter (gweet)"</Key>
 ```
 
 i3wm example config (```~/.i3/config```):
