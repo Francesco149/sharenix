@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# lets the user select a region of the screen and uploads the
+# screenshot using sharenix
+#
+# requires:
+# - https://github.com/Francesco149/sharenix
+# - any of:
+#     http://www.linuxbrit.co.uk/scrot
+#     https://github.com/GNOME/gnome-screenshot
+#     http://goodies.xfce.org/projects/
+#            applications/xfce4-screenshooter
+
+# not sleeping appears to cause glitchyness on some DEs
+# feel free to comment this out
+sleep 0.2s
+
+if command -v xfce4-screenshooter > /dev/null 2>&1; then
+    xfce4-screenshooter -r -o "sharenix -n"
+    exit $?
+fi
+
+# some implementations of mktemp (such as busybox's) don't allow
+# extensions at the end of the template so we rename the file
+
+sharenixtmp=$(mktemp /tmp/nicememe.XXXXXXXXXXXXXXXXXXX)
+mv "$sharenixtmp" "$sharenixtmp.png"
+sharenixtmp="$sharenixtmp.png"
+
+if command -v gnome-screenshot > /dev/null 2>&1; then
+    gnome-screenshot -a -f $sharenixtmp || exit $?
+elif command -v scrot > /dev/null 2>&1; then
+    scrot -s $sharenixtmp || exit $?
+else
+    echo "Couldn't find scrot, gnome-screenshot or " \
+         "xfce4-screenshooter."
+    echo "Please install either of them and try again"
+    exit 1
+fi
+
+# check file size (0b means that gnome-screenshot was cancelled)
+sharenixtmpsize=$(wc -c <"$sharenixtmp")
+
+if [ $sharenixtmpsize != 0 ]; then
+    sharenix -n $sharenixtmp
+    exit $?
+fi
+
+echo "Screenshot canceled"
+exit 1
+
