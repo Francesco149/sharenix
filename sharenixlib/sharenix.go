@@ -600,10 +600,10 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	if open && err == nil {
 		err = exec.Command("xdg-open", url).Run()
-                if err != nil {
-                    DebugPrintln(err)
-                    err = nil
-                }
+		if err != nil {
+			DebugPrintln(err)
+			err = nil
+		}
 	}
 
 	// display results
