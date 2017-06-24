@@ -23,7 +23,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Francesco149/sharenix/sharenixlib"
-	"github.com/kardianos/osext"
 	"io/ioutil"
 	"path"
 )
@@ -31,7 +30,7 @@ import (
 func loadConfig() (cfg *sharenixlib.Config, err error) {
 	cfg = &sharenixlib.Config{}
 
-	exeFolder, err := osext.ExecutableFolder()
+	exeFolder, err := sharenixlib.GetExeDir()
 	if err != nil {
 		return
 	}

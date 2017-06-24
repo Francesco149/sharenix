@@ -20,8 +20,22 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"path/filepath"
+	"strings"
 	"time"
 )
+
+// taken from https://github.com/kardianos
+func GetExeDir() (string, error) {
+	const deletedTag = " (deleted)"
+	execpath, err := os.Readlink("/proc/self/exe")
+	if err != nil {
+		return execpath, err
+	}
+	execpath = strings.TrimSuffix(execpath, deletedTag)
+	execpath = strings.TrimPrefix(execpath, deletedTag)
+	return filepath.Dir(execpath), nil
+}
 
 func GetHome() (res string) {
 	if res = os.Getenv("HOME"); res != "" {

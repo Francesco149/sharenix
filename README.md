@@ -175,7 +175,6 @@ If you get any errors, try getting the dependencies individually:
 ```
 go get github.com/mattn/go-gtk/gtk
 go get github.com/BurntSushi/xgb
-go get github.com/kardianos/osext
 go get github.com/mvdan/xurls
 go get github.com/ChrisTrenkamp/goxpath
 go get github.com/NodePrime/jsonpath
