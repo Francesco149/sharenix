@@ -21,3 +21,6 @@ tar -cvJf "$folder".tar.xz \
 echo -e "\nResult:"
 tar tf "$folder".tar.xz
 
+readelf --dynamic "$folder"/sharenix
+ldd "$folder"/sharenix
+
