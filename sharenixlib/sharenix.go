@@ -46,7 +46,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.6.4a"
+	ShareNixVersion = "ShareNix 0.6.5a"
 )
 
 const (
@@ -398,14 +398,17 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 
 		DebugPrintln("Trying to parse as URL...")
 		if xurls.Strict.MatchString(selectionstr) {
-			if defaultConfig {
-				sitecfg = cfg.GetServiceByName(cfg.DefaultUrlShortener)
+			match := xurls.Strict.FindString(selectionstr)
+			if strings.HasPrefix(selectionstr, match) {
+				if defaultConfig {
+					sitecfg = cfg.GetServiceByName(cfg.DefaultUrlShortener)
+				}
+				res, err = ShortenUrl(cfg, sitecfg,
+					selectionstr, silent, notif)
+				filename = selectionstr
+				newsitecfg = sitecfg
+				return
 			}
-			res, err = ShortenUrl(cfg, sitecfg,
-				selectionstr, silent, notif)
-			filename = selectionstr
-			newsitecfg = sitecfg
-			return
 		}
 
 		DebugPrintln("Trying to upload as plain text...")
