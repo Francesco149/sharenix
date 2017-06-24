@@ -79,6 +79,16 @@ the same as ShareX so you could just read through
 [this section](https://getsharex.com/docs/custom-uploader) of
 the ShareX guide.
 
+sharenix.json locations, from highest to lowest priority:
+
+```
+~/.sharenix.json
+(base path to sharenix's executable)/sharenix.json
+/etc/sharenix.json
+```
+
+The first config file that is found, starting from top to bottom, will be used.
+
 Notifications and canceling uploads
 ============
 Using the -n flag will enable notifications for uploads in the bottom right

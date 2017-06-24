@@ -25,8 +25,24 @@ import (
 	"github.com/Francesco149/sharenix/sharenixlib"
 	"github.com/kardianos/osext"
 	"io/ioutil"
+	"os"
+	"os/user"
 	"path"
 )
+
+func getHome() (res string) {
+	if res = os.Getenv("HOME"); res != "" {
+		return
+	}
+
+	usr, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+
+	res = usr.HomeDir
+	return
+}
 
 func loadConfig() (cfg *sharenixlib.Config, err error) {
 	cfg = &sharenixlib.Config{}
@@ -36,11 +52,27 @@ func loadConfig() (cfg *sharenixlib.Config, err error) {
 		return
 	}
 
-	// load config
-	file, err := ioutil.ReadFile(path.Join(exeFolder, "sharenix.json"))
+	cfgName := "sharenix.json"
+
+	cfgPaths := [...]string{
+		path.Join(getHome(), "."+cfgName),
+		path.Join(exeFolder, cfgName),
+		"/etc/" + cfgName,
+	}
+
+	var file []byte
+
+	for _, path := range cfgPaths {
+		file, err = ioutil.ReadFile(path)
+		if err == nil {
+			break
+		}
+	}
+
 	if err != nil {
 		return
 	}
+
 	err = json.Unmarshal(file, &cfg)
 	return
 }
