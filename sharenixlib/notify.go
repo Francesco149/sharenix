@@ -17,7 +17,6 @@ package sharenixlib
 
 import (
 	"fmt"
-	"github.com/kardianos/osext"
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/glib"
 	"github.com/mattn/go-gtk/gtk"
@@ -33,11 +32,11 @@ func lockName(index int) string {
 }
 
 func lockFile(index int) (file string, err error) {
-	exeFolder, err := osext.ExecutableFolder()
+	storage, err := GetStorageDir()
 	if err != nil {
 		return
 	}
-	file = path.Join(exeFolder, lockName(index))
+	file = path.Join(storage, lockName(index))
 	return
 }
 

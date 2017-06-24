@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.5.2a"
+	ShareNixVersion = "ShareNix 0.6.0a"
 )
 
 const (
@@ -207,28 +207,6 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 	}
 
 	return doThings()
-}
-
-// MakeArchiveDir creates the archive directory if it doesn't exist already.
-func MakeArchiveDir() error {
-	achiveDir, err := GetArchiveDir()
-	if err != nil {
-		return err
-	}
-
-	// create archive dir
-	direxists, err := FileExists(achiveDir)
-	if err != nil {
-		return err
-	}
-	if !direxists {
-		err = os.Mkdir(achiveDir, os.ModePerm)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // UploadFullScreen captures a full screen screenshot,
@@ -477,11 +455,6 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	var filename string
 
 	gtk.Init(nil)
-
-	err = MakeArchiveDir()
-	if err != nil {
-		return
-	}
 
 	// initial upload mode check
 	sitecfg, err = cfg.Parse(mode, site, silent)

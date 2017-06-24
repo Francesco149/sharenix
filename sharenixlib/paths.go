@@ -16,7 +16,6 @@
 package sharenixlib
 
 import (
-	"github.com/kardianos/osext"
 	"os"
 	"os/user"
 	"path"
@@ -36,22 +35,29 @@ func GetHome() (res string) {
 	return
 }
 
+func GetStorageDir() (res string, err error) {
+	res = path.Join(GetHome(), "sharenix")
+	err = MkDirIfNotExists(res)
+	return
+}
+
 // GetArchiveDir returns the absolute path to the archive directory.
-func GetArchiveDir() (archiveDir string, err error) {
-	exeFolder, err := osext.ExecutableFolder()
+func GetArchiveDir() (res string, err error) {
+	storage, err := GetStorageDir()
 	if err != nil {
 		return
 	}
-	archiveDir = path.Join(exeFolder, "/archive/")
+	res = path.Join(storage, "archive")
+	err = MkDirIfNotExists(res)
 	return
 }
 
 // GetHistoryCSV returns the absolute path to the history csv.
-func GetHistoryCSV() (csv string, err error) {
-	exeFolder, err := osext.ExecutableFolder()
+func GetHistoryCSV() (res string, err error) {
+	storage, err := GetStorageDir()
 	if err != nil {
 		return
 	}
-	csv = path.Join(exeFolder, "sharenix.csv")
+	res = path.Join(storage, "sharenix.csv")
 	return
 }

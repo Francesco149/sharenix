@@ -75,6 +75,21 @@ func FileExists(path string) (bool, error) {
 	return false, err
 }
 
+func MkDirIfNotExists(dir string) error {
+	direxists, err := FileExists(dir)
+	if err != nil {
+		return err
+	}
+	if !direxists {
+		err := os.Mkdir(dir, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // GenerateArchivedFilename returns an unique file path inside
 // archive/ that contains the current date, time and nanotime.
 func GenerateArchivedFilename(extension string) (string, error) {

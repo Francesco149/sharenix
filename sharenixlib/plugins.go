@@ -18,18 +18,18 @@ package sharenixlib
 import (
 	"bytes"
 	"fmt"
-	"github.com/kardianos/osext"
 	"os/exec"
 	"path"
 )
 
 // GetPluginsDir returns the absolute path to the plugins directory.
-func GetPluginsDir() (pluginsDir string, err error) {
-	exeFolder, err := osext.ExecutableFolder()
+func GetPluginsDir() (res string, err error) {
+	storage, err := GetStorageDir()
 	if err != nil {
 		return
 	}
-	pluginsDir = path.Join(exeFolder, "/plugins/")
+	res = path.Join(storage, "plugins")
+	err = MkDirIfNotExists(res)
 	return
 }
 
