@@ -31,6 +31,7 @@ import (
 	"html"
 	"image"
 	"image/png"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -45,7 +46,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.6.2a"
+	ShareNixVersion = "ShareNix 0.6.3a"
 )
 
 const (
@@ -308,6 +309,35 @@ func CreateArchiveFile(extension string) (
 	return
 }
 
+// TODO: merge these two funcs together
+func ArchiveFile(path string) (err error) {
+	path = string(bytes.TrimRight([]byte(path), "\000"))
+
+	var tmpfile *os.File
+	tmpfile, _, err = CreateArchiveFile(filepath.Ext(path)[1:])
+	if err != nil {
+		return
+	}
+	defer tmpfile.Close()
+
+	src, err := os.Open(path)
+	if err != nil {
+		fmt.Println("???")
+		return
+	}
+	defer src.Close()
+
+	if _, err = io.Copy(tmpfile, src); err != nil {
+		return
+	}
+
+	if err = tmpfile.Sync(); err != nil {
+		return
+	}
+
+	return
+}
+
 // UploadClipboard grabs an image or a file from the clipboard,
 // saves it in the archive and uploads it
 // cfg: the ShareNix config
@@ -347,6 +377,11 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		DebugPrintln("Trying to parse URI list...")
 		urilist := ParseUriList(selectionstr)
 		if len(urilist) > 0 {
+			if err = ArchiveFile(urilist[0].Path); err != nil {
+				return
+			}
+			// TODO: merge all archive calls into one in UploadFile
+
 			return UploadFile(
 				cfg, sitecfg, urilist[0].Path, silent, notif)
 		}
@@ -482,6 +517,9 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	case "f", "file":
 		if len(flag.Args()) != 1 {
 			err = errors.New("No file provided")
+			return
+		}
+		if err = ArchiveFile(flag.Args()[0]); err != nil {
 			return
 		}
 		res, filename, sitecfg, err = UploadFile(cfg, sitecfg,
