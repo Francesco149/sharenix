@@ -14,12 +14,9 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-ShareNix is a ShareX clone for Linux coded in Go. It features image/screenshot
-and file uploading to almost any file/image sharing service that has a public
+ShareNix is a ShareX clone for Linux. It features image/screenshot
+and file uploading to almost any file/image sharing service that has an
 API thanks to the easily customizable json configuration.
-
-ShareNix is only available as a command-line interface for now, but it will soon
-have a GUI to manage your settings and view your upload history.
 
 ShareNix uses the same configuration format as ShareX. If you're a ShareX user,
 you can easily import your settings by pasting them in the Services section of
@@ -31,9 +28,7 @@ Getting started - Prebuilt binaries
 ============
 The newest binaries are statically built against musl libc and
 gtk+2.0 and should require no dependencies. They were compiled on
-64-bit sabotage linux. I will try to provide both amd64 and i386
-build in the releases section, but you should really build it
-from source if you have a couple minutes.
+64-bit sabotage linux and 32-bit alpine linux.
 
 ```bash
 tar xvf sharenix-linux-*.tar.xz
@@ -46,9 +41,8 @@ sharenix -h
 You can now set-up sharenix any way you like: bind it to hotkeys,
 launch it from your terminal, and so on.
 
-Check out the sharenix.json config file for the example configuration (which
-works out of the box and uploads to my file sharing service at hnng.moe).
-More info on the regex parsing will be coming soon, but the behaviour is nearly
+Check out the sharenix.json config file for the example configuration.
+I might document the config format some day, but the behaviour is nearly
 the same as ShareX so you could just read through
 [this section](https://getsharex.com/docs/custom-uploader) of
 the ShareX guide.
