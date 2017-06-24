@@ -112,13 +112,6 @@ chmod +x sharenix-*
 Now you can bind these scripts to hotkeys using whatever configuration
 your DE/Window Manager has.
 
-On ubuntu and similar distros, you can bind them to hotkeys in CompizConfig
-Settings Manager under commands like so:
-
-![](http://hnng.moe/f/3CQ)
-
-![](http://hnng.moe/f/3CR)
-
 JWM example config (```~/.jwmrc```):
 ```xml
     <Key mask="CS" key="2">exec:sharenix -m="fs" -n -o</Key>
@@ -145,6 +138,14 @@ Control Shift 4 :Exec /path/to/sharenix-section
 Control Shift 5 :Exec sharenix -m="c" -n
 Control Shift i :Exec sharenix -m="c" -n -s="twitter (gweet)"
 ```
+
+On ubuntu and similar distros, you can bind them to hotkeys in CompizConfig
+Settings Manager under commands like so:
+
+![](http://hnng.moe/f/3CQ)
+
+![](http://hnng.moe/f/3CR)
+
 
 Getting started - Building from the source
 ============
