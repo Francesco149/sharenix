@@ -68,6 +68,13 @@ dismiss the notification.
 Right-click a "upload completed" notification will dimiss it, while left
 clicking the url will open it in your default browser.
 
+If for whatever reason notification positions get buggy, reset the locks
+by running:
+
+```
+rm ~/sharenix/.notify*
+```
+
 Screenshotting areas or windows
 ============
 Until window and area grabbing are built into sharenix, you can use pretty
