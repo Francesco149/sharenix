@@ -24,7 +24,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/BurntSushi/xgb"
-	"github.com/kardianos/osext"
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/glib"
 	"github.com/mattn/go-gtk/gtk"
@@ -37,7 +36,6 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -209,16 +207,6 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 	}
 
 	return doThings()
-}
-
-// GetArchiveDir returns the absolute path to the archive directory.
-func GetArchiveDir() (archiveDir string, err error) {
-	exeFolder, err := osext.ExecutableFolder()
-	if err != nil {
-		return
-	}
-	archiveDir = path.Join(exeFolder, "/archive/")
-	return
 }
 
 // MakeArchiveDir creates the archive directory if it doesn't exist already.

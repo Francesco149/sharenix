@@ -18,20 +18,8 @@ package sharenixlib
 import (
 	"encoding/csv"
 	//"fmt"
-	"github.com/kardianos/osext"
 	"os"
-	"path"
 )
-
-// GetHistoryCSV returns the absolute path to the history csv.
-func GetHistoryCSV() (csv string, err error) {
-	exeFolder, err := osext.ExecutableFolder()
-	if err != nil {
-		return
-	}
-	csv = path.Join(exeFolder, "sharenix.csv")
-	return
-}
 
 // GetUploadHistory returns all of the records in sharenix.csv
 func GetUploadHistory() (res [][]string, err error) {
