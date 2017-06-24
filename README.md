@@ -215,9 +215,8 @@ Plugin authors are highly advised to provide specific install instructions for
 their plugin. I will however provide generic guidelines in this section that
 will usually apply to every plugin to a certain extent.
 
-To install a plugin, all you have to do is copy all the plugin's files to the
-plugins directory in your sharenix folder (~/.sharenix if you followed the
-getting started guide). If the plugins directory doesn't exist, create it.
+To install a plugin, all you have to do is copy all the plugin's files to
+```~/sharenix/plugins```. If the plugins directory doesn't exist, create it.
 
 The plugin authors should always provide an example sharenix.json config entry,
 or at least a list of parameters you can use. For a generic example of a config
@@ -227,9 +226,8 @@ Writing a Plugin
 ============
 Sharenix has a very early and basic plugin system that might be subject to
 changes as the development progress.
-* Each plugin is a stand-alone executable that will be placed in the plugins
-  directory. You can write a plugin in any language you like as long as it
-  follows the specification.
+* Each plugin is a stand-alone executable that will be placed in the
+  ~/sharenix/plugins directory.
 * The last line of the combined stdout & stderr output is used and parsed as
   the plugin's output.
 * Command-line parameters must be [go-style](https://golang.org/pkg/flag).
