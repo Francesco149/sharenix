@@ -92,43 +92,14 @@ clicking the url will open it in your default browser.
 
 Screenshotting areas or windows
 ============
-Until actual area/window grabbing is implemented, you can hack together region
-and window screenshotting using these bash scripts (xclip and gnome-screenshot
-are required).
-Remember to replace loli with your username.
-
-sharenix-section.sh
+Until window and area grabbing are built into sharenix, you can use two glue
+scripts I have included that query xfce4-screenshooter, gnome-screenshot and
+scrot and automatically pass the result to sharenix for uploading.
 
 ```bash
-#!/bin/sh
-
-# take a screenshot using gnome-screenshot
-sharenixtmp=$(mktemp /tmp/nicememe.XXXXXXXXXXXXXXXXXXX.png)
-xclip -i -selection clipboard -t text/uri-list $sharenixtmp
-gnome-screenshot -a -f $sharenixtmp
-
-# check file size (0 bytes means that gnome-screenshot was cancelled)
-sharenixtmpsize=$(wc -c <"$sharenixtmp")
-if [ $sharenixtmpsize != 0 ]; then
-    /home/loli/.sharenix/sharenix -n $sharenixtmp
-fi
-```
-
-sharenix-window.sh
-
-```bash
-#!/bin/sh
-
-# take a screenshot using gnome-screenshot
-sharenixtmp=$(mktemp /tmp/nicememe.XXXXXXXXXXXXXXXXXXX.png)
-xclip -i -selection clipboard -t text/uri-list $sharenixtmp
-gnome-screenshot -w -f $sharenixtmp
-
-# check file size (0 bytes means that gnome-screenshot was cancelled)
-sharenixtmpsize=$(wc -c <"$sharenixtmp")
-if [ $sharenixtmpsize != 0 ]; then
-    /home/loli/.sharenix/sharenix -n $sharenixtmp
-fi
+wget https://raw.githubusercontent.com/Francesco149/sharenix/master/sharenix-section
+wget https://raw.githubusercontent.com/Francesco149/sharenix/master/sharenix-window
+chmod +x sharenix-*
 ```
 
 Now you can bind these scripts to hotkeys using whatever configuration
@@ -144,8 +115,8 @@ Settings Manager under commands like so:
 JWM example config (```~/.jwmrc```):
 ```xml
     <Key mask="CS" key="2">exec:sharenix -m="fs" -n -o</Key>
-    <Key mask="CS" key="3">exec:/path/to/sharenix-window.sh</Key>
-    <Key mask="CS" key="4">exec:/path/to/sharenix-section.sh</Key>
+    <Key mask="CS" key="3">exec:/path/to/sharenix-window</Key>
+    <Key mask="CS" key="4">exec:/path/to/sharenix-section</Key>
     <Key mask="CS" key="5">exec:sharenix -m="c" -n</Key>
     <Key mask="CS" key="i">exec:sharenix -m="c" -n -s="twitter (gweet)"</Key>
 ```
@@ -153,8 +124,8 @@ JWM example config (```~/.jwmrc```):
 i3wm example config (```~/.i3/config```):
 ```
 bindsym Ctrl+Shift+2 exec sharenix -m="fs" -n -o
-bindsym Ctrl+Shift+3 exec /path/to/sharenix-window.sh
-bindsym Ctrl+Shift+4 exec /path/to/sharenix-section.sh
+bindsym Ctrl+Shift+3 exec /path/to/sharenix-window
+bindsym Ctrl+Shift+4 exec /path/to/sharenix-section
 bindsym Ctrl+Shift+5 exec sharenix -m="c" -n
 bindsym Ctrl+Shift+i exec sharenix -m="c" -s="twitter" -n
 ```
@@ -162,8 +133,8 @@ bindsym Ctrl+Shift+i exec sharenix -m="c" -s="twitter" -n
 fluxbox example config (```~/.fluxbox/keys```):
 ```
 Control Shift 2 :Exec sharenix -m="fs" -n -o
-Control Shift 3 :Exec /home/loli/scr/sharenix-window.sh
-Control Shift 4 :Exec /home/loli/scr/sharenix-section.sh
+Control Shift 3 :Exec /path/to/sharenix-window
+Control Shift 4 :Exec /path/to/sharenix-section
 Control Shift 5 :Exec sharenix -m="c" -n
 Control Shift i :Exec sharenix -m="c" -n -s="twitter (gweet)"
 ```
