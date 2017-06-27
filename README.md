@@ -34,7 +34,7 @@ gtk+2.0 and should require no dependencies. They were compiled on
 tar xvf sharenix-linux-*.tar.xz
 sudo cp sharenix-linux-*/sharenix /bin
 chmod +x /bin/sharenix
-cp sharenix-linux-* ~/.sharenix.json
+cp sharenix-linux-*/sharenix.json ~/.sharenix.json
 sharenix -h
 ```
 
