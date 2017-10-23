@@ -29,7 +29,6 @@ import (
 	"github.com/mattn/go-gtk/gtk"
 	"mvdan.cc/xurls"
 	"html"
-	"image"
 	"image/png"
 	"io"
 	"net/http"
@@ -46,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.6.6a"
+	ShareNixVersion = "ShareNix 0.6.7a"
 )
 
 const (
@@ -438,24 +437,20 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 			"Height:", pixbuf.GetHeight(),
 			"Rowstride:", pixbuf.GetRowstride())
 
-		// encode png to archive and upload
-		pixels := pixbuf.GetPixels()
-		pic := &image.RGBA{pixels, 4 * pixbuf.GetWidth(), image.Rect(0, 0,
-			pixbuf.GetWidth(), pixbuf.GetHeight())}
-
+		// touch archive file
 		var afilepath string
 		var tmpfile *os.File
 		tmpfile, afilepath, err = CreateArchiveFile("png")
 		if err != nil {
 			return
 		}
-
-		err = png.Encode(tmpfile, pic)
-		if err != nil {
-			return
-		}
-
 		tmpfile.Close()
+
+		// let gtk save it as a proper png so we don't have to
+		// figure out what type of image we are dealing with
+		pixbuf.Save(afilepath, "png")
+		// TODO: for some reason this always returns an err which
+		// prints as nil so we can't error check here :(
 
 		return UploadFile(cfg, sitecfg, afilepath, silent, notif)
 	} else {
