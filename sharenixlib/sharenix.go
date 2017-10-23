@@ -27,7 +27,7 @@ import (
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/glib"
 	"github.com/mattn/go-gtk/gtk"
-	"github.com/mvdan/xurls"
+	"mvdan.cc/xurls"
 	"html"
 	"image"
 	"image/png"
@@ -46,7 +46,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.6.5a"
+	ShareNixVersion = "ShareNix 0.6.6a"
 )
 
 const (
@@ -397,8 +397,8 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		DebugPrintln(selectionstr)
 
 		DebugPrintln("Trying to parse as URL...")
-		if xurls.Strict.MatchString(selectionstr) {
-			match := xurls.Strict.FindString(selectionstr)
+		if xurls.Strict().MatchString(selectionstr) {
+			match := xurls.Strict().FindString(selectionstr)
 			if strings.HasPrefix(selectionstr, match) {
 				if defaultConfig {
 					sitecfg = cfg.GetServiceByName(cfg.DefaultUrlShortener)
@@ -596,8 +596,8 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	fakeResponseEnd()
 
 	url = strings.TrimSuffix(url, "\n")
-	matchedUrls := xurls.Strict.FindAllString(url, -1)
-	urli := xurls.Strict.FindIndex([]byte(url))
+	matchedUrls := xurls.Strict().FindAllString(url, -1)
+	urli := xurls.Strict().FindIndex([]byte(url))
 	if len(matchedUrls) == 1 && urli[0] == 0 &&
 		len(url) == len(matchedUrls[0]) {
 		// the result must only contain an url with no extra stuff to be
