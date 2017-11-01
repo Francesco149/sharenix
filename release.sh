@@ -12,6 +12,7 @@ go build --ldflags "-linkmode external -extldflags '$LDFLAGS'"
 echo ""
 echo "Packaging"
 folder="sharenix-$(uname -m)"
+rm -rf "$folder"
 mkdir -p "$folder"
 mv ./sharenix $folder/sharenix
 cp ./sharenix.json $folder/sharenix.json
@@ -20,7 +21,6 @@ cd "$folder"
 tar xf src.tar
 cd ..
 
-rm -rf "$folder"
 rm "$folder".tar.xz
 tar -cvJf "$folder".tar.xz \
     "$folder"/sharenix \
