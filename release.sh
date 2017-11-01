@@ -13,11 +13,16 @@ folder="sharenix-$(uname -m)"
 mkdir -p "$folder"
 mv ./sharenix $folder/sharenix
 cp ./sharenix.json $folder/sharenix.json
+git archive HEAD --prefix=src/ -o "$folder"/src.tar
+cd "$folder"
+tar xf src.tar
+cd ..
 
 rm "$folder".tar.xz
 tar -cvJf "$folder".tar.xz \
     "$folder"/sharenix \
-    "$folder"/sharenix.json
+    "$folder"/sharenix.json \
+    "$folder"/src
 
 echo -e "\nResult:"
 tar tf "$folder".tar.xz
