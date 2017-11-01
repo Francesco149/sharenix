@@ -3,12 +3,14 @@
 git pull origin master
 go get ./...
 
-echo -e "\nCompiling and Stripping"
+echo ""
+echo "Compiling and Stripping"
 LDFLAGS="$LDFLAGS -static -s -w -no-pie -Wl,--gc-sections"
 LDFLAGS="$LDFLAGS $(pkg-config --static --libs gtk+-2.0)"
 go build --ldflags "-linkmode external -extldflags '$LDFLAGS'"
 
-echo -e "\nPackaging"
+echo ""
+echo "Packaging"
 folder="sharenix-$(uname -m)"
 mkdir -p "$folder"
 mv ./sharenix $folder/sharenix
@@ -25,7 +27,8 @@ tar -cvJf "$folder".tar.xz \
     "$folder"/sharenix.json \
     "$folder"/src
 
-echo -e "\nResult:"
+echo ""
+echo "Result:"
 tar tf "$folder".tar.xz
 
 readelf --dynamic "$folder"/sharenix || exit 1
