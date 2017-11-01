@@ -27,14 +27,13 @@ sharenix.json.
 Getting started - Prebuilt binaries
 ============
 The newest binaries are statically built against musl libc and
-gtk+2.0 and should require no dependencies. They were compiled on
-64-bit sabotage linux and 32-bit alpine linux.
+gtk+2.0 and should require no dependencies.
 
 ```bash
-tar xvf sharenix-linux-*.tar.xz
-sudo cp sharenix-linux-*/sharenix /bin
-chmod +x /bin/sharenix
-cp sharenix-linux-*/sharenix.json ~/.sharenix.json
+tar xvf sharenix-*.tar.xz
+sudo cp sharenix-*/sharenix /usr/bin
+sudo chmod +x /usr/bin/sharenix
+cp sharenix-*/sharenix.json ~/.sharenix.json
 sharenix -h
 ```
 
