@@ -2,7 +2,7 @@
     "DefaultFileUploader": "hnng.moe (file upload)",
     "DefaultImageUploader": "imgur.com",
     "DefaultUrlShortener": "waa.ai",
-	"XineramaHead": 1,
+    "XineramaHead": 1,
 
     "Services": [
         {
