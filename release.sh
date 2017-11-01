@@ -1,6 +1,7 @@
 #!/bin/sh
 
 git pull origin master
+go get ./...
 
 echo -e "\nCompiling and Stripping"
 LDFLAGS="$LDFLAGS -static -s -w -no-pie -Wl,--gc-sections"
@@ -21,6 +22,8 @@ tar -cvJf "$folder".tar.xz \
 echo -e "\nResult:"
 tar tf "$folder".tar.xz
 
-readelf --dynamic "$folder"/sharenix
-ldd "$folder"/sharenix
+readelf --dynamic "$folder"/sharenix || exit 1
+ldd "$folder"/sharenix && exit 1
+
+exit 0
 

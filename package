@@ -1,0 +1,29 @@
+#!/bin/sh
+
+dir=$(dirname $0)
+dir=$(readlink -f $dir)
+prevdir=$(pwd)
+cd $dir
+
+image=sharenix:golang-1.9.2-alpine3.6
+pkgpath=/usr/local/go/src/github.com/Francesco149/sharenix
+
+dockerbuild()
+{
+    docker build \
+        --build-arg PREFIX="$1" \
+        --build-arg ARCH="$2" \
+        -t $3 . \
+        || return 1
+
+    docker run --rm \
+        -v $dir:$pkgpath \
+        -w $pkgpath \
+        $3 \
+        || return 1
+}
+
+dockerbuild      golang x86_64 $image       || exit 1
+dockerbuild i386/golang i386   ${image}i386 || exit 1
+
+cd $prevdir
