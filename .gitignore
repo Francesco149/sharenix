@@ -6,3 +6,4 @@ sharenix-*
 !sharenix-section
 !sharenix-window
 *.csv
+*.swp
