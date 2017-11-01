@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.6.7a"
+	ShareNixVersion = "ShareNix 0.7.0a"
 )
 
 const (
@@ -149,7 +149,7 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 			glib.IdleAdd(w.Destroy)
 			DebugPrintln("Goroutine is exiting")
 		}
-		notiferr := Notifyf(infiniteTime,
+		notiferr := Notifyf(cfg.XineramaHead, infiniteTime,
 			onload, "Uploading %s to %s...", path, sitecfg.Name)
 		if notiferr != nil {
 			err = notiferr
@@ -201,7 +201,7 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 			glib.IdleAdd(w.Destroy)
 			DebugPrintln("Goroutine is exiting")
 		}
-		err = Notifyf(infiniteTime,
+		err = Notifyf(cfg.XineramaHead, infiniteTime,
 			onload, "Shortening %s with %s...", url, sitecfg.Name)
 		return
 	}
@@ -286,7 +286,7 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 			glib.IdleAdd(w.Destroy)
 			DebugPrintln("Goroutine is exiting")
 		}
-		err = Notifyf(infiniteTime,
+		err = Notifyf(cfg.XineramaHead, infiniteTime,
 			onload, "Uploading screenshot to %s...", sitecfg.Name)
 		return
 	}
@@ -626,9 +626,11 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	if notification {
 		if err != nil {
-			Notifyf(notifTime, nil, html.EscapeString(err.Error()))
+			Notifyf(cfg.XineramaHead, notifTime, nil,
+				html.EscapeString(err.Error()))
 		} else {
-			Notifyf(notifTime, nil, `<a href="%s">%s</a>`, url, url)
+			Notifyf(cfg.XineramaHead, notifTime, nil,
+				`<a href="%s">%s</a>`, url, url)
 		}
 	}
 

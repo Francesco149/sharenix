@@ -21,6 +21,7 @@ import (
 	"github.com/mattn/go-gtk/glib"
 	"github.com/mattn/go-gtk/gtk"
 	"github.com/mattn/go-gtk/pango"
+	"github.com/BurntSushi/xgb"
 	"os"
 	"path"
 	"time"
@@ -78,8 +79,8 @@ func lockEnd(index int) (err error) {
 // expire is the time after which the notification will expire automatically.
 // onInit is a goroutine that will be started before the gtk main loop
 // blocks the main thread. It takes the notification window as a parameter.
-func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
-	a ...interface{}) (err error) {
+func Notifyf(head uint32, expire time.Duration, onInit func(*gtk.Window),
+	format string, a ...interface{}) (err error) {
 
 	win := gtk.NewWindow(gtk.WINDOW_POPUP)
 	win.SetTitle(ShareNixVersion)
@@ -118,13 +119,26 @@ func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
 	win.Add(l)
 	win.ShowAll() // parent window will adjust to the size of the label here
 
+	X, err := xgb.NewConn()
+	if err != nil {
+		return
+	}
+
+	var rects []*ScreenRect
+	rects, err = ScreenRects(X)
+	if err != nil {
+		return
+	}
+
+	X.Close()
+
 	// our window is now the right width for the notification text
 	// (clamped to a max of 60 chars).
 
 	// calculate notification position so that it doens't overlap other notifs
 	var width, height int
 	win.GetSize(&width, &height)
-	y := gdk.ScreenHeight() - height - 10
+	y := rects[head].Rect.Max.Y - height - 10
 
 	for ; ; lockIndex++ {
 		var free bool
@@ -144,12 +158,12 @@ func Notifyf(expire time.Duration, onInit func(*gtk.Window), format string,
 		y -= 10
 
 		if y < 0 {
-			y = gdk.ScreenHeight() - height - 10
+			y = rects[head].Rect.Max.Y - height - 10
 		}
 	}
 
 	// Position window in the bottom right corner of the screen
-	win.Move(gdk.ScreenWidth()-width-10, y)
+	win.Move(rects[head].Rect.Max.X-width-10, y)
 
 	// ghetto way to fix the positioning bug when resizing a pango.ELLIPSIZE_END
 	// widget by limiting text width first and then restoring full text after
