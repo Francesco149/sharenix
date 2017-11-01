@@ -18,6 +18,7 @@ cd "$folder"
 tar xf src.tar
 cd ..
 
+rm -rf "$folder"
 rm "$folder".tar.xz
 tar -cvJf "$folder".tar.xz \
     "$folder"/sharenix \
