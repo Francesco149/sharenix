@@ -124,18 +124,19 @@ func SendFilePostRequest(url, fileParamName, filePath string,
 	// write the file to the file header
 	_, err = io.Copy(formfile, file)
 
-	// the writer must be closed to finalize the file entry
-	err = w.Close()
-	if err != nil {
-		return
-	}
-
 	// append extra params
 	for param, val := range extraParams {
 		err = w.WriteField(param, val)
 		if err != nil {
 			return
 		}
+	}
+
+	ctype := w.FormDataContentType()
+
+	err = w.Close()
+	if err != nil {
+		return
 	}
 
 	// finally create the request
@@ -145,7 +146,7 @@ func SendFilePostRequest(url, fileParamName, filePath string,
 	}
 
 	// set type & boundary
-	req.Header.Set("Content-Type", w.FormDataContentType())
+	req.Header.Set("Content-Type", ctype)
 
 	// extra headers
 	for hname, hval := range extraHeaders {
@@ -156,5 +157,8 @@ func SendFilePostRequest(url, fileParamName, filePath string,
 	client := &http.Client{}
 	DebugPrintln(req.URL, extraParams, extraHeaders)
 	res, err = client.Do(req)
+	if err != nil {
+		panic(err)
+	}
 	return
 }
