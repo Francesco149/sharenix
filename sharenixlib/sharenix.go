@@ -111,7 +111,7 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 
 	for i := range sitecfg.Arguments {
 		sitecfg.Arguments[i] = strings.Replace(
-			sitecfg.Arguments[i], "$input$", path, -1)
+			sitecfg.Arguments[i], "$input$", filepath.Base(path), -1)
 	}
 
 	Println(silent, "Uploading file to", sitecfg.Name)
