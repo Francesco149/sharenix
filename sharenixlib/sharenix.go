@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.9.3a"
+	ShareNixVersion = "ShareNix 0.9.4a"
 )
 
 const (
@@ -88,6 +88,33 @@ func fakeResponseEnd() {
 
 // -----------------------------------------------------------------------------
 
+// ReplaceKeywords replaces various keywords in a string
+// $Y$: local year padded to 4 digits
+// $M$: local month padded to 2 digits
+// $D$: local day padded to 2 digits
+// $h$: local hours padded to 2 digits
+// $m$: local minutes padded to 2 digits
+// $s$: local seconds padded to 2 digits
+// $n$: local nanoseconds
+func ReplaceKeywords(str string) string {
+	t := time.Now()
+	replacements := map[string]func() string {
+		"$Y$": func() string { return fmt.Sprintf("%04d", t.Year()) },
+		"$M$": func() string { return fmt.Sprintf("%02d", t.Month()) },
+		"$D$": func() string { return fmt.Sprintf("%02d", t.Day()) },
+		"$h$": func() string { return fmt.Sprintf("%02d", t.Hour()) },
+		"$m$": func() string { return fmt.Sprintf("%02d", t.Minute()) },
+		"$s$": func() string { return fmt.Sprintf("%02d", t.Second()) },
+		"$n$": func() string { return fmt.Sprintf("%d", t.Nanosecond()) },
+	}
+
+	for key, formatter := range replacements {
+		str = strings.Replace(str, key, formatter(), -1)
+	}
+
+	return str
+}
+
 // UploadFile uploads a file
 // cfg: the ShareNix config
 // sitecfg: the target site config
@@ -114,10 +141,12 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 	for i := range sitecfg.Arguments {
 		sitecfg.Arguments[i] = strings.Replace(sitecfg.Arguments[i],
 			"$input$", basepath, -1)
+		sitecfg.Arguments[i] = ReplaceKeywords(sitecfg.Arguments[i])
 	}
 
 	sitecfg.RequestURL = strings.Replace(sitecfg.RequestURL, "$input$",
 		basepath, -1)
+	sitecfg.RequestURL = ReplaceKeywords(sitecfg.RequestURL)
 
 	Println(silent, "Uploading file to", sitecfg.Name)
 
