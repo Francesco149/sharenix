@@ -205,6 +205,49 @@ to the default site)
     cd $GOPATH/bin
     ./sharenix -m=fs
 
+Example: Upload to your personal imgur account
+============
+this is a temporary solution until there's proper oauth support built in
+
+visit [this page](https://api.imgur.com/oauth2/authorize?client_id=b972ecca954f246&response_type=token)
+and authorize the application. It will redirect you to the homepage of imgur,
+but with a token in the URL
+
+the URL will look like
+
+```
+https://imgur.com/#access_token=something&... (other stuff we don't care about)
+```
+
+you want the value of access_token ("something" in this example).
+
+the config is the exact same as the anonymous imgur upload except that instead
+of the Client-ID you have ```Bearer something``` where "something" is your
+access_token.
+
+```
+        {
+            "Name": "imgur.com (account)",
+            "RequestType": "POST",
+            "Headers": {
+                "Authorization": "Bearer something"
+            },
+            "RequestURL": "https://api.imgur.com/3/image",
+            "FileFormName": "image",
+            "Arguments": {
+                "type": "file"
+            },
+            "ResponseType": "Text",
+            "URL": "$json:data.link$",
+            "DeletionURL": "https://imgur.com/delete/$json:data.deletehash$"
+        },
+```
+
+this works fine, however the access token will expire after about 1 month and
+you will need to repeat the procedure to acquire a new one.
+
+this will be fixed when proper OAuth handling is implemented.
+
 Plugins
 ============
 Sharenix has a very early form of plugins as of 0.3.0a. Feel free to contact me
