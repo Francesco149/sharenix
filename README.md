@@ -248,6 +248,23 @@ you will need to repeat the procedure to acquire a new one.
 
 this will be fixed when proper OAuth handling is implemented.
 
+Example: upload to OwnCloud webdav
+============
+the default config file already has an example that uploads to the demo instance
+
+all you have to do is change username, password and url
+
+```
+        {
+            "Name": "owncloud (demo)",
+            "RequestType": "PUT",
+            "RequestURL": "https://demo.owncloud.org/remote.php/webdav/$Y$-$M$-$D$_$h$-$m$-$s$_$n$$extension$",
+            "Username": "test",
+            "Password": "test",
+            "ResponseType": "RedirectionURL"
+        }
+```
+
 Plugins
 ============
 Sharenix has a very early form of plugins as of 0.3.0a. Feel free to contact me
