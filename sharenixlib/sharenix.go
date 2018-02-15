@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.9.4a"
+	ShareNixVersion = "ShareNix 0.9.5a"
 )
 
 const (
@@ -206,7 +206,12 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 	for i := range sitecfg.Arguments {
 		sitecfg.Arguments[i] = strings.Replace(
 			sitecfg.Arguments[i], "$input$", url, -1)
+		sitecfg.Arguments[i] = ReplaceKeywords(sitecfg.Arguments[i])
 	}
+
+	sitecfg.RequestURL = strings.Replace(sitecfg.RequestURL, "$input$",
+		url, -1)
+	sitecfg.RequestURL = ReplaceKeywords(sitecfg.RequestURL)
 
 	Println(silent, "Shortening with", sitecfg.Name)
 
@@ -282,10 +287,17 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 
 	// TODO: avoid repeating this loop in every upload function and move
 	// it to its own func
+	basepath := filepath.Base(afilepath)
+
 	for i := range sitecfg.Arguments {
-		sitecfg.Arguments[i] = strings.Replace(
-			sitecfg.Arguments[i], "$input$", afilepath, -1)
+		sitecfg.Arguments[i] = strings.Replace(sitecfg.Arguments[i],
+			"$input$", basepath, -1)
+		sitecfg.Arguments[i] = ReplaceKeywords(sitecfg.Arguments[i])
 	}
+
+	sitecfg.RequestURL = strings.Replace(sitecfg.RequestURL, "$input$",
+		basepath, -1)
+	sitecfg.RequestURL = ReplaceKeywords(sitecfg.RequestURL)
 
 	// upload
 	Println(silent, "Uploading to", sitecfg.Name)
