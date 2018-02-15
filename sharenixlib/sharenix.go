@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.9.2a"
+	ShareNixVersion = "ShareNix 0.9.3a"
 )
 
 const (
@@ -109,10 +109,15 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 		return
 	}
 
+	basepath := filepath.Base(path)
+
 	for i := range sitecfg.Arguments {
-		sitecfg.Arguments[i] = strings.Replace(
-			sitecfg.Arguments[i], "$input$", filepath.Base(path), -1)
+		sitecfg.Arguments[i] = strings.Replace(sitecfg.Arguments[i],
+			"$input$", basepath, -1)
 	}
+
+	sitecfg.RequestURL = strings.Replace(sitecfg.RequestURL, "$input$",
+		basepath, -1)
 
 	Println(silent, "Uploading file to", sitecfg.Name)
 
