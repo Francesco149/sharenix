@@ -7,3 +7,5 @@ sharenix-*
 !sharenix-window
 *.csv
 *.swp
+/node_modules/
+/package-lock.json
