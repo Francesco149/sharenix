@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.9.6a"
+	ShareNixVersion = "ShareNix 0.9.7a"
 )
 
 const (

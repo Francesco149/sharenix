@@ -136,8 +136,7 @@ func Notifyf(head uint32, expire time.Duration, onInit func(*gtk.Window),
 	// (clamped to a max of 60 chars).
 
 	// calculate notification position so that it doens't overlap other notifs
-	var width, height int
-	win.GetSize(&width, &height)
+	width, height := win.GetSize()
 	y := rects[head].Rect.Max.Y - height - 10
 
 	for ; ; lockIndex++ {
