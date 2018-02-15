@@ -7,6 +7,8 @@
 - [Screenshotting areas or windows](#screenshotting-areas-or-windows)
 - [Feature progress](#feature-progress)
 - [Getting started - Building from the source](#getting-started---building-from-the-source)
+- [Example: Upload to your personal imgur account](#example-upload-to-your-personal-imgur-account)
+- [Example: upload to OwnCloud webdav](#example-upload-to-owncloud-webdav)
 - [Plugins](#plugins)
 - [Using a Plugin](#using-a-plugin)
 - [Writing a Plugin](#writing-a-plugin)
