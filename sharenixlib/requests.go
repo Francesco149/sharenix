@@ -59,14 +59,17 @@ func SniffMimeType(filePath string) (string, error) {
 // filePath is ignored
 // if username is empty, no http auth header will be sent
 //
-// if method is GET, the parameters will be url-encoded, otherwise they will be
-// fields of the multi-part form
+// if method is GET or PUT, the parameters will be url-encoded, otherwise they
+// will be fields of the multi-part form
+//
+// if method is PUT and filePath is set, the request body will be the contents
+// of the file
 func SendRequest(method, url, fileParamName, filePath string,
 	extraParams map[string]string, extraHeaders map[string]string,
 	username string, password string,
 ) (res *http.Response, filename string, err error) {
 
-	if method == "GET" {
+	if method == "GET" || method == "PUT" {
 		var u *neturl.URL
 		u, err = neturl.Parse(url)
 		if err != nil {
@@ -89,7 +92,7 @@ func SendRequest(method, url, fileParamName, filePath string,
 
 	w := multipart.NewWriter(buf)
 
-	if fileParamName != "" {
+	if fileParamName != "" && method != "PUT" {
 		filename = filepath.Base(filePath)
 
 		var realmime string
@@ -124,7 +127,7 @@ func SendRequest(method, url, fileParamName, filePath string,
 	}
 
 	// append extra params as form fields
-	if method != "GET" {
+	if method != "GET" && method != "PUT" {
 		for param, val := range extraParams {
 			err = w.WriteField(param, val)
 			if err != nil {
@@ -141,13 +144,33 @@ func SendRequest(method, url, fileParamName, filePath string,
 	}
 
 	// finally create the request
-	req, err := http.NewRequest(method, url, buf)
+	var req *http.Request
+	if method == "PUT" && filePath != "" {
+		var freader *os.File
+		freader, err = os.Open(filePath)
+		defer freader.Close()
+		if err != nil {
+			return
+		}
+		req, err = http.NewRequest(method, url, freader)
+
+		var realmime string
+		realmime, err = SniffMimeType(filePath)
+		if err != nil {
+			return
+		}
+
+		req.Header.Set("Content-Type", realmime)
+	} else {
+		req, err = http.NewRequest(method, url, buf)
+
+		// set type & boundary
+		req.Header.Set("Content-Type", ctype)
+	}
+
 	if err != nil {
 		return
 	}
-
-	// set type & boundary
-	req.Header.Set("Content-Type", ctype)
 
 	// extra headers
 	for hname, hval := range extraHeaders {
