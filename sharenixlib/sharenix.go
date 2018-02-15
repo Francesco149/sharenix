@@ -45,11 +45,10 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.7.1a"
+	ShareNixVersion = "ShareNix 0.8.0a"
 )
 
 const (
-	notifTime    = time.Second * 30
 	infiniteTime = time.Duration(9000000000000000000)
 )
 
@@ -626,10 +625,12 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	if notification {
 		if err != nil {
-			Notifyf(cfg.XineramaHead, notifTime, nil,
+			Notifyf(cfg.XineramaHead,
+				time.Second*time.Duration(cfg.NotificationTime), nil,
 				html.EscapeString(err.Error()))
 		} else {
-			Notifyf(cfg.XineramaHead, notifTime, nil,
+			Notifyf(cfg.XineramaHead,
+				time.Second*time.Duration(cfg.NotificationTime), nil,
 				`<a href="%s">%s</a>`, url, url)
 		}
 	}

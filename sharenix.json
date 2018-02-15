@@ -3,6 +3,7 @@
     "DefaultImageUploader": "imgur.com",
     "DefaultUrlShortener": "waa.ai",
     "XineramaHead": 0,
+	"NotificationTime": 30,
 
     "Services": [
         {

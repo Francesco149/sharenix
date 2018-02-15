@@ -36,7 +36,8 @@ type Config struct {
 	DefaultFileUploader  string
 	DefaultImageUploader string
 	DefaultUrlShortener  string
-	XineramaHead		 uint32 `json:",omitempty"`
+	XineramaHead         uint32  `json:",omitempty"`
+	NotificationTime     float64 `json:",omitempty"`
 	Services             []SiteConfig
 }
 
