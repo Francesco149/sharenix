@@ -180,7 +180,7 @@ func SendRequest(method, url, fileParamName, filePath string,
 
 	// auth
 	if username != "" {
-		req.SetBasicAuth(username, password);
+		req.SetBasicAuth(username, password)
 	}
 
 	// send request

@@ -39,7 +39,7 @@ func SetClipboardText(text string) {
 	clipboard.Store()
 	t := time.Now()
 
-	for time.Since(t) <= time.Millisecond * 100 {
+	for time.Since(t) <= time.Millisecond*100 {
 		gtk.MainIterationDo(true)
 	}
 }
