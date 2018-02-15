@@ -103,15 +103,14 @@ func ReplaceKeywords(input, extension string, sitecfg *SiteConfig) {
 	replacements := map[string]func() string{
 		"$input$":     func() string { return input },
 		"$extension$": func() string { return extension },
-		"$Y$":         func() string { return fmt.Sprintf("%04d", t.Year()) },
-		"$M$":         func() string { return fmt.Sprintf("%02d", t.Month()) },
-		"$D$":         func() string { return fmt.Sprintf("%02d", t.Day()) },
-		"$h$":         func() string { return fmt.Sprintf("%02d", t.Hour()) },
-		"$m$":         func() string { return fmt.Sprintf("%02d", t.Minute()) },
-		"$s$":         func() string { return fmt.Sprintf("%02d", t.Second()) },
-		"$n$": func() string {
-			return fmt.Sprintf("%d", t.Nanosecond())
-		},
+
+		"$Y$": func() string { return fmt.Sprintf("%04d", t.Year()) },
+		"$M$": func() string { return fmt.Sprintf("%02d", t.Month()) },
+		"$D$": func() string { return fmt.Sprintf("%02d", t.Day()) },
+		"$h$": func() string { return fmt.Sprintf("%02d", t.Hour()) },
+		"$m$": func() string { return fmt.Sprintf("%02d", t.Minute()) },
+		"$s$": func() string { return fmt.Sprintf("%02d", t.Second()) },
+		"$n$": func() string { return fmt.Sprintf("%d", t.Nanosecond()) },
 	}
 
 	replacer := func(str string) string {
