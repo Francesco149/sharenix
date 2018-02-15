@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.9.5a"
+	ShareNixVersion = "ShareNix 0.9.6a"
 )
 
 const (
@@ -88,7 +88,7 @@ func fakeResponseEnd() {
 
 // -----------------------------------------------------------------------------
 
-// ReplaceKeywords replaces various keywords in a string
+// ReplaceKeywords replaces various keywords in the site configuration fields
 // $Y$: local year padded to 4 digits
 // $M$: local month padded to 2 digits
 // $D$: local day padded to 2 digits
@@ -96,9 +96,13 @@ func fakeResponseEnd() {
 // $m$: local minutes padded to 2 digits
 // $s$: local seconds padded to 2 digits
 // $n$: local nanoseconds
-func ReplaceKeywords(str string) string {
+// $input$: whatever is passed as input
+// $extension$: whatever is passed as extension
+func ReplaceKeywords(input, extension string, sitecfg *SiteConfig) {
 	t := time.Now()
 	replacements := map[string]func() string {
+		"$input$": func() string { return input },
+		"$extension$": func() string { return extension },
 		"$Y$": func() string { return fmt.Sprintf("%04d", t.Year()) },
 		"$M$": func() string { return fmt.Sprintf("%02d", t.Month()) },
 		"$D$": func() string { return fmt.Sprintf("%02d", t.Day()) },
@@ -108,11 +112,18 @@ func ReplaceKeywords(str string) string {
 		"$n$": func() string { return fmt.Sprintf("%d", t.Nanosecond()) },
 	}
 
-	for key, formatter := range replacements {
-		str = strings.Replace(str, key, formatter(), -1)
+	replacer := func(str string) string {
+		for key, formatter := range replacements {
+			str = strings.Replace(str, key, formatter(), -1)
+		}
+		return str
 	}
 
-	return str
+	for i := range sitecfg.Arguments {
+		sitecfg.Arguments[i] = replacer(sitecfg.Arguments[i])
+	}
+
+	sitecfg.RequestURL = replacer(sitecfg.RequestURL)
 }
 
 // UploadFile uploads a file
@@ -137,16 +148,8 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 	}
 
 	basepath := filepath.Base(path)
-
-	for i := range sitecfg.Arguments {
-		sitecfg.Arguments[i] = strings.Replace(sitecfg.Arguments[i],
-			"$input$", basepath, -1)
-		sitecfg.Arguments[i] = ReplaceKeywords(sitecfg.Arguments[i])
-	}
-
-	sitecfg.RequestURL = strings.Replace(sitecfg.RequestURL, "$input$",
-		basepath, -1)
-	sitecfg.RequestURL = ReplaceKeywords(sitecfg.RequestURL)
+	extension := filepath.Ext(basepath)
+	ReplaceKeywords(basepath, extension, sitecfg)
 
 	Println(silent, "Uploading file to", sitecfg.Name)
 
@@ -203,16 +206,7 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 	silent, notif bool) (res *http.Response, err error) {
 
-	for i := range sitecfg.Arguments {
-		sitecfg.Arguments[i] = strings.Replace(
-			sitecfg.Arguments[i], "$input$", url, -1)
-		sitecfg.Arguments[i] = ReplaceKeywords(sitecfg.Arguments[i])
-	}
-
-	sitecfg.RequestURL = strings.Replace(sitecfg.RequestURL, "$input$",
-		url, -1)
-	sitecfg.RequestURL = ReplaceKeywords(sitecfg.RequestURL)
-
+	ReplaceKeywords(url, "", sitecfg)
 	Println(silent, "Shortening with", sitecfg.Name)
 
 	doThings := func() (*http.Response, error) {
@@ -288,16 +282,8 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	// TODO: avoid repeating this loop in every upload function and move
 	// it to its own func
 	basepath := filepath.Base(afilepath)
-
-	for i := range sitecfg.Arguments {
-		sitecfg.Arguments[i] = strings.Replace(sitecfg.Arguments[i],
-			"$input$", basepath, -1)
-		sitecfg.Arguments[i] = ReplaceKeywords(sitecfg.Arguments[i])
-	}
-
-	sitecfg.RequestURL = strings.Replace(sitecfg.RequestURL, "$input$",
-		basepath, -1)
-	sitecfg.RequestURL = ReplaceKeywords(sitecfg.RequestURL)
+	extension := filepath.Ext(basepath)
+	ReplaceKeywords(basepath, extension, sitecfg)
 
 	// upload
 	Println(silent, "Uploading to", sitecfg.Name)
