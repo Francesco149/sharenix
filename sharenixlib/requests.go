@@ -21,6 +21,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/http/httputil"
 	"net/textproto"
 	neturl "net/url"
 	"os"
@@ -184,7 +185,12 @@ func SendRequest(method, url, fileParamName, filePath string,
 
 	// send request
 	client := &http.Client{}
-	DebugPrintln(req.URL, extraParams, extraHeaders)
+	requestDump, err := httputil.DumpRequest(req, false)
+	if err != nil {
+		DebugPrintln(err)
+	} else {
+		DebugPrintln(fmt.Sprintf("%q", requestDump))
+	}
 	res, err = client.Do(req)
 	if err != nil {
 		panic(err)
