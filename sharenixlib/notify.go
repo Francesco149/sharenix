@@ -17,11 +17,11 @@ package sharenixlib
 
 import (
 	"fmt"
+	"github.com/BurntSushi/xgb"
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/glib"
 	"github.com/mattn/go-gtk/gtk"
 	"github.com/mattn/go-gtk/pango"
-	"github.com/BurntSushi/xgb"
 	"os"
 	"path"
 	"time"
