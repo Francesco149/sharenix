@@ -28,6 +28,8 @@ type SiteConfig struct {
 	URL          string   `json:",omitempty"`
 	ThumbnailURL string   `json:",omitempty"`
 	DeletionURL  string   `json:",omitempty"`
+	Username     string   `json:",omitempty"`
+	Password     string   `json:",omitempty"`
 }
 
 // A Config holds the json ShareX config for all sites plus the default upload

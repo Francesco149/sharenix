@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.8.1a"
+	ShareNixVersion = "ShareNix 0.9.0a"
 )
 
 const (
@@ -137,7 +137,7 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 		}
 		return SendFilePostRequest(sitecfg.RequestURL,
 			sitecfg.FileFormName, path, sitecfg.Arguments,
-			sitecfg.Headers)
+			sitecfg.Headers, sitecfg.Username, sitecfg.Password)
 	}
 
 	newsitecfg = sitecfg
@@ -264,7 +264,8 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 			return nil, "", errors.New("GET file upload is not supported.")
 		case "POST":
 			return SendFilePostRequest(sitecfg.RequestURL, sitecfg.FileFormName,
-				afilepath, sitecfg.Arguments, sitecfg.Headers)
+				afilepath, sitecfg.Arguments, sitecfg.Headers, sitecfg.Username,
+				sitecfg.Password)
 		case "PLUGIN":
 			output, err := RunPlugin(
 				sitecfg.RequestURL, sitecfg.Arguments)

@@ -89,6 +89,7 @@ func SniffMimeType(filePath string) (string, error) {
 // file upload POST request and sends it
 func SendFilePostRequest(url, fileParamName, filePath string,
 	extraParams map[string]string, extraHeaders map[string]string,
+	username string, password string,
 ) (res *http.Response, filename string, err error) {
 
 	filename = filepath.Base(filePath)
@@ -151,6 +152,11 @@ func SendFilePostRequest(url, fileParamName, filePath string,
 	// extra headers
 	for hname, hval := range extraHeaders {
 		req.Header.Set(hname, hval)
+	}
+
+	// auth
+	if username != "" {
+		req.SetBasicAuth(username, password);
 	}
 
 	// send request
