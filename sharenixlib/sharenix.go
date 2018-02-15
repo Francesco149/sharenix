@@ -45,7 +45,7 @@ import (
 
 const (
 	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.9.0a"
+	ShareNixVersion = "ShareNix 0.9.1a"
 )
 
 const (
@@ -135,7 +135,7 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 			filename = filepath.Base(path)
 			return
 		}
-		return SendFilePostRequest(sitecfg.RequestURL,
+		return SendRequest(sitecfg.RequestType, sitecfg.RequestURL,
 			sitecfg.FileFormName, path, sitecfg.Arguments,
 			sitecfg.Headers, sitecfg.Username, sitecfg.Password)
 	}
@@ -178,10 +178,6 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 
 	doThings := func() (*http.Response, error) {
 		switch sitecfg.RequestType {
-		case "GET":
-			return SendGetRequest(sitecfg.RequestURL, sitecfg.Arguments)
-		case "POST":
-			return SendPostRequest(sitecfg.RequestURL, sitecfg.Arguments)
 		case "PLUGIN":
 			output, err := RunPlugin(sitecfg.RequestURL, sitecfg.Arguments)
 			if err != nil {
@@ -190,7 +186,11 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 			server, client := fakeResponseStart(200, output)
 			return client.Get(server.URL + "/")
 		default:
-			return nil, errors.New("Unknown RequestType")
+			res, _, err = SendRequest(sitecfg.RequestType,
+				sitecfg.RequestURL, sitecfg.FileFormName, "",
+				sitecfg.Arguments, sitecfg.Headers, sitecfg.Username,
+				sitecfg.Password)
+			return res, err
 		}
 	}
 
@@ -256,16 +256,8 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	// upload
 	Println(silent, "Uploading to", sitecfg.Name)
 
-	// TODO: make a more generic version of this switch to avoid repeating
-	// this code over and over
 	doThings := func() (*http.Response, string, error) {
 		switch sitecfg.RequestType {
-		case "GET":
-			return nil, "", errors.New("GET file upload is not supported.")
-		case "POST":
-			return SendFilePostRequest(sitecfg.RequestURL, sitecfg.FileFormName,
-				afilepath, sitecfg.Arguments, sitecfg.Headers, sitecfg.Username,
-				sitecfg.Password)
 		case "PLUGIN":
 			output, err := RunPlugin(
 				sitecfg.RequestURL, sitecfg.Arguments)
@@ -276,7 +268,9 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 			res, err := client.Get(server.URL + "/")
 			return res, filepath.Base(afilepath), err
 		default:
-			return nil, "", errors.New("Unknown RequestType")
+			return SendRequest(sitecfg.RequestType, sitecfg.RequestURL,
+				sitecfg.FileFormName, afilepath, sitecfg.Arguments,
+				sitecfg.Headers, sitecfg.Username, sitecfg.Password)
 		}
 	}
 

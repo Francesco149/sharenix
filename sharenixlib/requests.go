@@ -22,43 +22,11 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
-	"net/url"
+	neturl "net/url"
 	"os"
 	"path/filepath"
 	"strings"
 )
-
-// SendGetRequest sends a GET request with params
-func SendGetRequest(baseurl string, params map[string]string) (
-	res *http.Response, err error) {
-
-	u, err := url.Parse(baseurl)
-	if err != nil {
-		return
-	}
-
-	q := u.Query()
-	for name, value := range params {
-		q.Set(name, value)
-	}
-	u.RawQuery = q.Encode()
-
-	DebugPrintln(u)
-	res, err = http.Get(u.String())
-	return
-}
-
-// SendGetRequest sends a POST request with params
-func SendPostRequest(baseurl string, params map[string]string) (
-	*http.Response, error) {
-
-	q := url.Values{}
-	for name, value := range params {
-		q.Set(name, value)
-	}
-	DebugPrintln(baseurl, q)
-	return http.PostForm(baseurl, q)
-}
 
 var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
 
@@ -85,51 +53,83 @@ func SniffMimeType(filePath string) (string, error) {
 	return http.DetectContentType(first512[:n]), nil
 }
 
-// SendFilePostRequest prepares a multipart
-// file upload POST request and sends it
-func SendFilePostRequest(url, fileParamName, filePath string,
+// SendRequest prepares HTTP request and sends it
+//
+// if fileParamName empty, no file field will be created and
+// filePath is ignored
+// if username is empty, no http auth header will be sent
+//
+// if method is GET, the parameters will be url-encoded, otherwise they will be
+// fields of the multi-part form
+func SendRequest(method, url, fileParamName, filePath string,
 	extraParams map[string]string, extraHeaders map[string]string,
 	username string, password string,
 ) (res *http.Response, filename string, err error) {
 
-	filename = filepath.Base(filePath)
+	if method == "GET" {
+		var u *neturl.URL
+		u, err = neturl.Parse(url)
+		if err != nil {
+			return
+		}
 
-	realmime, err := SniffMimeType(filePath)
-	if err != nil {
-		return
-	}
+		// url-encode extra params
+		q := u.Query()
+		for name, value := range extraParams {
+			q.Set(name, value)
+		}
+		u.RawQuery = q.Encode()
 
-	// try opening the file
-	file, err := os.Open(filePath)
-	if err != nil {
-		return
+		DebugPrintln(u)
+		url = u.String()
 	}
-	defer file.Close()
 
 	// prepare request body buffer
 	buf := &bytes.Buffer{}
 
-	// create a multipart file header with the given param name and file
 	w := multipart.NewWriter(buf)
-	h := make(textproto.MIMEHeader)
-	h.Set("Content-Disposition",
-		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
-			escapeQuotes(fileParamName), escapeQuotes(filename)))
-	h.Set("Content-Type", realmime)
 
-	formfile, err := w.CreatePart(h)
-	if err != nil {
-		return
-	}
+	if fileParamName != "" {
+		filename = filepath.Base(filePath)
 
-	// write the file to the file header
-	_, err = io.Copy(formfile, file)
-
-	// append extra params
-	for param, val := range extraParams {
-		err = w.WriteField(param, val)
+		var realmime string
+		realmime, err = SniffMimeType(filePath)
 		if err != nil {
 			return
+		}
+
+		// try opening the file
+		var file *os.File
+		file, err = os.Open(filePath)
+		if err != nil {
+			return
+		}
+		defer file.Close()
+
+		// create a multipart file header with the given param name and file
+		h := make(textproto.MIMEHeader)
+		h.Set("Content-Disposition",
+			fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
+				escapeQuotes(fileParamName), escapeQuotes(filename)))
+		h.Set("Content-Type", realmime)
+
+		var formfile io.Writer
+		formfile, err = w.CreatePart(h)
+		if err != nil {
+			return
+		}
+
+		// write the file to the file header
+		_, err = io.Copy(formfile, file)
+	}
+
+	// append extra params as form fields
+	if method != "GET" {
+		for param, val := range extraParams {
+			err = w.WriteField(param, val)
+			if err != nil {
+				return
+			}
 		}
 	}
 
@@ -141,7 +141,7 @@ func SendFilePostRequest(url, fileParamName, filePath string,
 	}
 
 	// finally create the request
-	req, err := http.NewRequest("POST", url, buf)
+	req, err := http.NewRequest(method, url, buf)
 	if err != nil {
 		return
 	}
