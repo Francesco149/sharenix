@@ -40,6 +40,14 @@
             "ResponseType": "Text",
             "URL": "$json:data.link$",
             "DeletionURL": "https://imgur.com/delete/$json:data.deletehash$"
-        }
+        },
+		{
+			"Name": "owncloud (demo)",
+			"RequestType": "PUT",
+			"RequestURL": "https://demo.owncloud.org/remote.php/webdav/$Y$-$M$-$D$_$h$-$m$-$s$_$n$$extension$",
+			"Username": "test",
+			"Password": "test",
+			"ResponseType": "RedirectionURL"
+		}
     ]
 }
