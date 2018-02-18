@@ -16,15 +16,11 @@
 package sharenixlib
 
 import (
-	"errors"
 	"fmt"
 	"github.com/kardianos/osext"
 	"os"
 	"os/user"
 	"path"
-	"path/filepath"
-	"runtime"
-	"strings"
 	"time"
 )
 
