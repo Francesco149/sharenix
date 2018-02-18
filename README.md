@@ -16,7 +16,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-ShareNix is a ShareX clone for Linux. It features image/screenshot
+ShareNix is a ShareX clone for Linux and FreeBSD. It features image/screenshot
 and file uploading to almost any file/image sharing service that has an
 API thanks to the easily customizable json configuration.
 
