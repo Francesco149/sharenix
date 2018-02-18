@@ -16,24 +16,44 @@
 package sharenixlib
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/user"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
 
 // taken from https://github.com/kardianos
-func GetExeDir() (string, error) {
-	const deletedTag = " (deleted)"
-	execpath, err := os.Readlink("/proc/self/exe")
-	if err != nil {
-		return execpath, err
+func executable() (string, error) {
+	switch runtime.GOOS {
+	case "linux", "android":
+		const deletedTag = " (deleted)"
+		execpath, err := os.Readlink("/proc/self/exe")
+		if err != nil {
+			return execpath, err
+		}
+		execpath = strings.TrimSuffix(execpath, deletedTag)
+		execpath = strings.TrimPrefix(execpath, deletedTag)
+		return execpath, nil
+	case "netbsd":
+		return os.Readlink("/proc/curproc/exe")
+	case "dragonfly":
+		return os.Readlink("/proc/curproc/file")
+	case "solaris":
+		return os.Readlink(fmt.Sprintf("/proc/%d/path/a.out", os.Getpid()))
 	}
-	execpath = strings.TrimSuffix(execpath, deletedTag)
-	execpath = strings.TrimPrefix(execpath, deletedTag)
+	return "", errors.New("ExecPath not implemented for " + runtime.GOOS)
+}
+
+func GetExeDir() (execpath string, err error) {
+	execpath, err = executable()
+	if err != nil {
+		return
+	}
 	return filepath.Dir(execpath), nil
 }
 
