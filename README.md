@@ -98,6 +98,20 @@ chmod +x sharenix-*
 Now you can bind these scripts to hotkeys using whatever configuration
 your DE/Window Manager has.
 
+DWM example config (edit ```config.h``` and recompile dwm):
+```c
+char const* sharenix2cmd[] = { "sharenix", "-n", "-c", "-m=fs", 0 };
+char const* sharenix3cmd[] = { "sharenix-window", 0 };
+char const* sharenix4cmd[] = { "sharenix-section", 0 };
+char const* sharenix5cmd[] = { "sharenix", "-n", "-c", "-m=c", 0 };
+Key keys[] = {
+    { ControlMask|ShiftMask, XK_2, spawn, {.v = sharenix2cmd } },
+    { ControlMask|ShiftMask, XK_3, spawn, {.v = sharenix3cmd } },
+    { ControlMask|ShiftMask, XK_4, spawn, {.v = sharenix4cmd } },
+    { ControlMask|ShiftMask, XK_5, spawn, {.v = sharenix5cmd } },
+    /* ... */
+```
+
 JWM example config (```~/.jwmrc```):
 ```xml
 <Key mask="CS" key="2">exec:sharenix -m="fs" -n -o</Key>
