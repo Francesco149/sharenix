@@ -30,6 +30,7 @@ import (
 func loadConfig() (cfg *sharenixlib.Config, err error) {
 	cfg = &sharenixlib.Config{}
 	cfg.NotificationTime = 30
+	cfg.ClipboardTime = 5
 
 	exeFolder, err := sharenixlib.GetExeDir()
 	if err != nil {

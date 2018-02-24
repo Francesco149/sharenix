@@ -40,6 +40,7 @@ type Config struct {
 	DefaultUrlShortener  string
 	XineramaHead         uint32  `json:",omitempty"`
 	NotificationTime     float64 `json:",omitempty"`
+	ClipboardTime        float64 `json:",omitempty"`
 	Services             []SiteConfig
 }
 

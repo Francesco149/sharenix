@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.9.13a"
+	ShareNixVersion = "ShareNix 0.9.14a"
 )
 
 const (
@@ -670,7 +670,7 @@ func ShareNix(cfg *Config, mode, site string, silent,
 			"CTRL-C if you're done copying...")
 		// hack: just run gtk main for a bit and pray that the
 		// clipboard manager catches our stuff
-		glib.TimeoutAdd(5000, func() bool {
+		glib.TimeoutAdd(uint(cfg.ClipboardTime*1000), func() bool {
 			gtk.MainQuit()
 			return true
 		})
