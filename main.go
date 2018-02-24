@@ -92,6 +92,8 @@ func handleCLI() (err error) {
 
 	phistory := flag.Bool("history", false, "Show upload history (grep-able)")
 	pversion := flag.Bool("v", false, "Shows the program version")
+	pdebug := flag.Bool("g", false, "Show verbose debug information "+
+		"(output can include sensitive info such as API keys)")
 
 	flag.Parse()
 	if !flag.Parsed() {
@@ -128,6 +130,8 @@ func handleCLI() (err error) {
 
 		return
 	}
+
+	sharenixlib.ShareNixDebug = *pdebug
 
 	// perform upload
 	_, _, _, err = sharenixlib.ShareNix(

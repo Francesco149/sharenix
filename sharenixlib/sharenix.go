@@ -44,13 +44,14 @@ import (
 )
 
 const (
-	ShareNixDebug   = true
-	ShareNixVersion = "ShareNix 0.9.10a"
+	ShareNixVersion = "ShareNix 0.9.11a"
 )
 
 const (
 	infiniteTime = time.Duration(9000000000000000000)
 )
+
+var ShareNixDebug = false
 
 // -----------------------------------------------------------------------------
 // !! WARNING: Ghetto code ahead !!
