@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.9.12a"
+	ShareNixVersion = "ShareNix 0.9.13a"
 )
 
 const (
@@ -644,7 +644,10 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	}
 
 	// display results
-	Println(silent, "URL:", url)
+	if !silent {
+		fmt.Printf("URL: ")
+	}
+	fmt.Println(url)
 	if len(thumburl) > 0 {
 		Println(silent, "Thumbnail URL:", thumburl)
 	}
