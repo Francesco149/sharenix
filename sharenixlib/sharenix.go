@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.9.11a"
+	ShareNixVersion = "ShareNix 0.9.12a"
 )
 
 const (
@@ -662,7 +662,7 @@ func ShareNix(cfg *Config, mode, site string, silent,
 				time.Second*time.Duration(cfg.NotificationTime), nil,
 				`<a href="%s">%s</a>`, url, url)
 		}
-	} else {
+	} else if copyurl {
 		DebugPrintln("Waiting for clipboard manager, feel free to",
 			"CTRL-C if you're done copying...")
 		// hack: just run gtk main for a bit and pray that the
