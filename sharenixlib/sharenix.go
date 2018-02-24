@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.9.14a"
+	ShareNixVersion = "ShareNix 0.9.15a"
 )
 
 const (

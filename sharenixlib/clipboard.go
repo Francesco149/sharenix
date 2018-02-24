@@ -13,11 +13,18 @@
    along with sharenix. If not, see <http://www.gnu.org/licenses/>.
 */
 
+// +build !cgocheck
+
 package sharenixlib
+
+// #cgo pkg-config: gtk+-2.0
+// #include "clipboard.go.h"
+import "C"
 
 import (
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/gtk"
+	"unsafe"
 )
 
 // GetClipboard returns the default display's GTK clipboard
@@ -36,6 +43,7 @@ func SetClipboardText(text string) {
 	pri := gtk.NewClipboardGetForDisplay(display, gdk.SELECTION_PRIMARY)
 
 	for _, cli := range []*gtk.Clipboard{pri, GetClipboard()} {
+		C._gtk_clipboard_set_can_store(unsafe.Pointer(cli.GClipboard))
 		cli.SetText(text)
 		gtk.MainIterationDo(true)
 		cli.Store()
