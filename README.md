@@ -9,6 +9,7 @@
 - [Getting started - Building from the source](#getting-started---building-from-the-source)
 - [Example: Upload to your personal imgur account](#example-upload-to-your-personal-imgur-account)
 - [Example: upload to OwnCloud webdav](#example-upload-to-owncloud-webdav)
+- [The URLs don't persist in the clipboard!](#the-urls-dont-persist-in-the-clipboard)
 - [Plugins](#plugins)
 - [Using a Plugin](#using-a-plugin)
 - [Writing a Plugin](#writing-a-plugin)
@@ -281,6 +282,30 @@ all you have to do is change username, password and url
             "ResponseType": "RedirectionURL"
         }
 ```
+
+The URLs don't persist in the clipboard!
+============
+First of all, make sure you have a clipboard manager installed and started,
+such as [parcellite](http://parcellite.sourceforge.net/) or
+[clipmenu](https://github.com/cdown/clipmenu) . On linux, the clipboard
+will only persist if there's a clipboard daemon grabbing all newly copied
+data.
+
+If you're running sharenix without a notification, it will hang for a couple
+seconds to make sure that a clipboard manager can have a chance to grab
+the URL. If you don't like the defaults, you can adjust it in
+```sharenix.json``` by changing ```ClipboardTime``` . This value is in
+seconds and can be fractional.
+
+If you don't want to use a clipboard manager or all else fails, you can
+pipe the URL into xclip or anything else like so:
+
+```sh
+$ sharenix -q -c=0 /path/to/my/file | xclip -i -sel cli
+```
+
+xclip will fork into a background process to keep the URL around until
+something grabs ownership of it.
 
 Plugins
 ============
