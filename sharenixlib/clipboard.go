@@ -18,7 +18,6 @@ package sharenixlib
 import (
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/gtk"
-	"time"
 )
 
 // GetClipboard returns the default display's GTK clipboard
@@ -33,13 +32,13 @@ func GetClipboard() *gtk.Clipboard {
 // and it is not guaranteed to persist on all window managers once the program
 // terminates.
 func SetClipboardText(text string) {
-	clipboard := GetClipboard()
-	clipboard.SetText(text)
-	gtk.MainIterationDo(true)
-	clipboard.Store()
-	t := time.Now()
+	display := gdk.DisplayGetDefault()
+	pri := gtk.NewClipboardGetForDisplay(display, gdk.SELECTION_PRIMARY)
 
-	for time.Since(t) <= time.Millisecond*100 {
+	for _, cli := range []*gtk.Clipboard{pri, GetClipboard()} {
+		cli.SetText(text)
+		gtk.MainIterationDo(true)
+		cli.Store()
 		gtk.MainIterationDo(true)
 	}
 }
