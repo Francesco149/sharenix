@@ -200,7 +200,7 @@ go get github.com/mattn/go-gtk/gtk
 go get github.com/BurntSushi/xgb
 go get mvdan.cc/xurls
 go get github.com/ChrisTrenkamp/goxpath
-go get github.com/NodePrime/jsonpath
+go get github.com/Francesco149/jsonpath
 go get github.com/kardianos/osext
 go get github.com/Francesco149/sharenix
 ```

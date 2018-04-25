@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"github.com/ChrisTrenkamp/goxpath"
 	"github.com/ChrisTrenkamp/goxpath/tree/xmltree"
-	"github.com/NodePrime/jsonpath"
+	"github.com/Francesco149/jsonpath"
 	"net/url"
 	"regexp"
 	"strconv"
