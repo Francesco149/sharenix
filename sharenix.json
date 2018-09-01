@@ -1,5 +1,5 @@
 {
-    "DefaultFileUploader": "hnng.moe (file upload)",
+    "DefaultFileUploader": "uguu.se",
     "DefaultImageUploader": "imgur.com",
     "DefaultUrlShortener": "waa.ai",
     "XineramaHead": 0,
@@ -19,13 +19,11 @@
             "DeletionURL": "$json:data.delete_link$"
         },
         {
-            "Name": "hnng.moe (file upload)",
+            "Name": "uguu.se",
             "RequestType": "POST",
-            "RequestURL": "http://www.hnng.moe/upload_d.php",
+            "RequestURL": "https://uguu.se/api.php?d=upload-tool",
             "FileFormName": "file",
-            "ResponseType": "Text",
-            "URL": "$json:url$",
-            "DeletionURL": "$json:deletelink$"
+            "ResponseType": "Text"
         },
         {
             "Name": "imgur.com",
