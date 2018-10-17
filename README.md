@@ -25,8 +25,6 @@ ShareNix is somewhat compatible with ShareX's json config format.
 If you're a ShareX user, you can easily import your settings by pasting
 them in the Services section of sharenix.json
 
-[Demonstration video](http://hnng.moe/f/3CI).
-
 Getting started - Prebuilt binaries
 ============
 The newest binaries are statically built against musl libc and
