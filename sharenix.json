@@ -4,6 +4,7 @@
     "DefaultUrlShortener": "waa.ai",
     "XineramaHead": 0,
     "NotificationTime": 30,
+    "NotifyUploading": true,
     "ClipboardTime": 5,
 
     "Services": [

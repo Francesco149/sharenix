@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.9.17a"
+	ShareNixVersion = "ShareNix 0.9.18a"
 )
 
 const (
@@ -181,7 +181,7 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 
 	newsitecfg = sitecfg
 
-	if notif {
+	if notif && cfg.NotifyUploading {
 		onload := func(w *gtk.Window) {
 			res, filename, err = doThings()
 			glib.IdleAdd(w.Destroy)
@@ -229,7 +229,7 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 		}
 	}
 
-	if notif {
+	if notif && cfg.NotifyUploading {
 		onload := func(w *gtk.Window) {
 			res, err = doThings()
 			glib.IdleAdd(w.Destroy)
@@ -308,7 +308,7 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		}
 	}
 
-	if notif {
+	if notif && cfg.NotifyUploading {
 		onload := func(w *gtk.Window) {
 			res, file, err = doThings()
 			glib.IdleAdd(w.Destroy)
