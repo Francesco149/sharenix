@@ -5,8 +5,8 @@ go get ./...
 
 echo ""
 echo "Compiling and Stripping"
-LDFLAGS="$LDFLAGS -static -s -w -no-pie -Wl,--gc-sections"
-LDFLAGS="$LDFLAGS $(pkg-config --static --libs gtk+-2.0)"
+LDFLAGS="$LDFLAGS -s -w -Wl,--gc-sections"
+#LDFLAGS="$LDFLAGS $(pkg-config --libs gtk+-2.0)"
 go build --ldflags "-linkmode external -extldflags '$LDFLAGS'"
 
 echo ""
@@ -30,9 +30,6 @@ tar -cvJf "$folder".tar.xz \
 echo ""
 echo "Result:"
 tar tf "$folder".tar.xz
-
-readelf --dynamic "$folder"/sharenix || exit 1
-ldd "$folder"/sharenix && exit 1
 
 exit 0
 
