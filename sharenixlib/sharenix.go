@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.9.18a"
+	ShareNixVersion = "ShareNix 0.9.19a"
 )
 
 const (
@@ -90,27 +90,33 @@ func fakeResponseEnd() {
 // -----------------------------------------------------------------------------
 
 // ReplaceKeywords replaces various keywords in the site configuration fields
-// $Y$: local year padded to 4 digits
-// $M$: local month padded to 2 digits
-// $D$: local day padded to 2 digits
-// $h$: local hours padded to 2 digits
-// $m$: local minutes padded to 2 digits
-// $s$: local seconds padded to 2 digits
+// $Y$/%yy: local year padded to 4 digits
+// $M$/%mo: local month padded to 2 digits
+// $D$/%d: local day padded to 2 digits
+// $h$/%h: local hours padded to 2 digits
+// $m$/%mi: local minutes padded to 2 digits
+// $s$/%s: local seconds padded to 2 digits
 // $n$: local nanoseconds
 // $input$: whatever is passed as input
 // $extension$: whatever is passed as extension
 func ReplaceKeywords(input, extension string, sitecfg *SiteConfig) {
 	t := time.Now()
+	// TODO: do this in a non-shitty way that is escape-able
 	replacements := map[string]func() string{
 		"$input$":     func() string { return input },
 		"$extension$": func() string { return extension },
-
 		"$Y$": func() string { return fmt.Sprintf("%04d", t.Year()) },
+		"%yy": func() string { return fmt.Sprintf("%04d", t.Year()) },
 		"$M$": func() string { return fmt.Sprintf("%02d", t.Month()) },
+		"%mo": func() string { return fmt.Sprintf("%02d", t.Month()) },
 		"$D$": func() string { return fmt.Sprintf("%02d", t.Day()) },
+		"%d": func() string { return fmt.Sprintf("%02d", t.Day()) },
 		"$h$": func() string { return fmt.Sprintf("%02d", t.Hour()) },
+		"%h": func() string { return fmt.Sprintf("%02d", t.Hour()) },
 		"$m$": func() string { return fmt.Sprintf("%02d", t.Minute()) },
+		"%mi": func() string { return fmt.Sprintf("%02d", t.Minute()) },
 		"$s$": func() string { return fmt.Sprintf("%02d", t.Second()) },
+		"%s": func() string { return fmt.Sprintf("%02d", t.Second()) },
 		"$n$": func() string { return fmt.Sprintf("%d", t.Nanosecond()) },
 	}
 
