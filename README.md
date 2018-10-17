@@ -193,10 +193,8 @@ something like that). I don't plan on refactoring the code for now. If you
 encounter issues while trying to compile it, please downgrade to go 1.7.1 or earlier.
 
 Before we start building ShareNix, you will need to set up a few dependencies.
-* Make sure that you have gtk 2.0.
-* Get the dev headers for glib, cairo, pango and gtk2. On Ubuntu 15.04, the
-  required packages are: libglib2.0-dev, libcairo-dev, libpango1.0-dev
-  and libgtk-2-dev.
+* Get the dev headers for glib, cairo, pango and gtk2. On debian-ubuntu
+  you just need to install libgtk2.0-dev
 * Make sure that you have go >=1.3.1
 
 It should be possible to automatically get all the dependencies
