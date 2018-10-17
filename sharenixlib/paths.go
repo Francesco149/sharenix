@@ -71,7 +71,7 @@ func GenerateArchivedFilename(extension string) (string, error) {
 		return "", err
 	}
 
-	return path.Join(archiveDir, fmt.Sprintf("%v-%v-%v_%v-%v-%v_%v.%s",
+	return path.Join(archiveDir, fmt.Sprintf("%v-%v-%v_%v-%v-%v_%v%s",
 		ye, int(mo), da, hour, min, sec, t.UnixNano(), extension)), nil
 }
 

@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.9.16a"
+	ShareNixVersion = "ShareNix 0.9.17a"
 )
 
 const (
@@ -268,7 +268,7 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	}
 
 	// save to archive
-	afilepath, err := GenerateArchivedFilename("png")
+	afilepath, err := GenerateArchivedFilename(".png")
 	if err != nil {
 		return
 	}
@@ -341,7 +341,7 @@ func ArchiveFile(path string) (err error) {
 	path = string(bytes.TrimRight([]byte(path), "\000"))
 
 	var tmpfile *os.File
-	tmpfile, _, err = CreateArchiveFile(filepath.Ext(path)[1:])
+	tmpfile, _, err = CreateArchiveFile(filepath.Ext(path))
 	if err != nil {
 		return
 	}
@@ -441,7 +441,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		DebugPrintln("Trying to upload as plain text...")
 		var afilepath string
 		var tmpfile *os.File
-		tmpfile, afilepath, err = CreateArchiveFile("txt")
+		tmpfile, afilepath, err = CreateArchiveFile(".txt")
 		if err != nil {
 			return
 		}
@@ -468,7 +468,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		// touch archive file
 		var afilepath string
 		var tmpfile *os.File
-		tmpfile, afilepath, err = CreateArchiveFile("png")
+		tmpfile, afilepath, err = CreateArchiveFile(".png")
 		if err != nil {
 			return
 		}
