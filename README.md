@@ -2,7 +2,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Getting started - Prebuilt binaries](#getting-started---prebuilt-binaries)
+- [Installing - Arch Linux](#installing---arch-linux)
+- [Installing - Prebuilt binaries](#installing---prebuilt-binaries)
+- [Usage](#usage)
 - [Notifications and canceling uploads](#notifications-and-canceling-uploads)
 - [Screenshotting areas or windows](#screenshotting-areas-or-windows)
 - [Feature progress](#feature-progress)
@@ -25,7 +27,23 @@ ShareNix is somewhat compatible with ShareX's json config format.
 If you're a ShareX user, you can easily import your settings by pasting
 them in the Services section of sharenix.json
 
-Getting started - Prebuilt binaries
+Installing - Arch Linux
+============
+if you use arch linux, there's an aur package that compiles and installs
+the latest version of ShareNix for you:
+
+```
+pacman -S --needed base-devel
+pacman -S git
+git clone https://aur.archlinux.org/sharenix-git.git
+cd sharenix-git
+makepkg -si
+```
+
+customize your config by copying /etc/sharenix.json to ~/.sharenix.json
+and editing it
+
+Installing - Prebuilt binaries
 ============
 The newest binaries are statically built against musl libc and
 gtk+2.0 and should require no dependencies.
@@ -38,6 +56,12 @@ cp sharenix-*/sharenix.json ~/.sharenix.json
 sharenix -h
 ```
 
+Usage
+============
+* ```sharenix -h``` for a list of available options
+* ```sharenix-section``` to select a region and upload it
+* ```sharenix-window``` to screenshot a window and upload it
+
 You can now set-up sharenix any way you like: bind it to hotkeys,
 launch it from your terminal, and so on.
 
@@ -45,7 +69,7 @@ Check out the sharenix.json config file for the example configuration.
 I might document the config format some day, but the behaviour is nearly
 the same as ShareX so you could just read through
 [this section](https://getsharex.com/docs/custom-uploader) of
-the ShareX guide.
+the ShareX guide. ShareNix supports most of the json syntax.
 
 sharenix.json locations, from highest to lowest priority:
 
@@ -86,13 +110,8 @@ If you have xfce4-screenshooter, you can use
 
 As a more generic solution, I have written two glue scripts
 that query xfce4-screenshooter, gnome-screenshot and scrot and automatically
-pass the result to sharenix for uploading.
-
-```bash
-wget https://raw.githubusercontent.com/Francesco149/sharenix/master/sharenix-section
-wget https://raw.githubusercontent.com/Francesco149/sharenix/master/sharenix-window
-chmod +x sharenix-*
-```
+pass the result to sharenix for uploading. if you followed the install
+instructions, they should already be installed.
 
 Now you can bind these scripts to hotkeys using whatever configuration
 your DE/Window Manager has.
