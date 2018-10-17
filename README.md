@@ -158,11 +158,7 @@ Control Shift i :Exec sharenix -m="c" -n -s="twitter (gweet)"
 ```
 
 On ubuntu and similar distros, you can bind them to hotkeys in CompizConfig
-Settings Manager under commands like so:
-
-![](http://hnng.moe/f/3CQ)
-
-![](http://hnng.moe/f/3CR)
+Settings Manager under commands
 
 Feature progress
 ============
