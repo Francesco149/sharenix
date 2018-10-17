@@ -45,8 +45,7 @@ and editing it
 
 Installing - Prebuilt binaries
 ============
-The newest binaries are statically built against musl libc and
-gtk+2.0 and should require no dependencies.
+download the latest release from https://github.com/Francesco149/sharenix/releases
 
 ```bash
 tar xvf sharenix-*.tar.xz
