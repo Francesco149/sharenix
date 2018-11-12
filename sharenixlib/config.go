@@ -41,6 +41,7 @@ type Config struct {
 	XineramaHead         uint32  `json:",omitempty"`
 	NotificationTime     float64 `json:",omitempty"`
 	NotifyUploading      bool `json:",omitempty"`
+	NotifyCommand        string `json:",omitempty"`
 	ClipboardTime        float64 `json:",omitempty"`
 	Services             []SiteConfig
 }

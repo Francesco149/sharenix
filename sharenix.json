@@ -5,6 +5,7 @@
     "XineramaHead": 0,
     "NotificationTime": 30,
     "NotifyUploading": true,
+		"NotifyCommand": "",
     "ClipboardTime": 5,
 
     "Services": [

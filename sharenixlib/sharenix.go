@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.9.19a"
+	ShareNixVersion = "ShareNix 0.10.0a"
 )
 
 const (
@@ -188,17 +188,21 @@ func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
 	newsitecfg = sitecfg
 
 	if notif && cfg.NotifyUploading {
-		onload := func(w *gtk.Window) {
-			res, filename, err = doThings()
-			glib.IdleAdd(w.Destroy)
-			DebugPrintln("Goroutine is exiting")
+		msg := fmt.Sprintf("Uploading %s to %s...", path, sitecfg.Name)
+		if cfg.NotifyCommand != "" {
+			exec.Command(cfg.NotifyCommand, msg).Run()
+		} else {
+			onload := func(w *gtk.Window) {
+				res, filename, err = doThings()
+				glib.IdleAdd(w.Destroy)
+				DebugPrintln("Goroutine is exiting")
+			}
+			notiferr := Notifyf(cfg.XineramaHead, infiniteTime, onload, msg)
+			if notiferr != nil {
+				err = notiferr
+			}
+			return
 		}
-		notiferr := Notifyf(cfg.XineramaHead, infiniteTime,
-			onload, "Uploading %s to %s...", path, sitecfg.Name)
-		if notiferr != nil {
-			err = notiferr
-		}
-		return
 	}
 
 	res, filename, err = doThings()
@@ -236,14 +240,18 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 	}
 
 	if notif && cfg.NotifyUploading {
-		onload := func(w *gtk.Window) {
-			res, err = doThings()
-			glib.IdleAdd(w.Destroy)
-			DebugPrintln("Goroutine is exiting")
+		msg := fmt.Sprintf("Shortening %s with %s...", url, sitecfg.Name)
+		if cfg.NotifyCommand != "" {
+			err = exec.Command(cfg.NotifyCommand, msg).Run()
+		} else {
+			onload := func(w *gtk.Window) {
+				res, err = doThings()
+				glib.IdleAdd(w.Destroy)
+				DebugPrintln("Goroutine is exiting")
+			}
+			err = Notifyf(cfg.XineramaHead, infiniteTime, onload, msg)
+			return
 		}
-		err = Notifyf(cfg.XineramaHead, infiniteTime,
-			onload, "Shortening %s with %s...", url, sitecfg.Name)
-		return
 	}
 
 	return doThings()
@@ -315,14 +323,18 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	}
 
 	if notif && cfg.NotifyUploading {
-		onload := func(w *gtk.Window) {
-			res, file, err = doThings()
-			glib.IdleAdd(w.Destroy)
-			DebugPrintln("Goroutine is exiting")
+		msg := fmt.Sprintf("Uploading screenshot to %s...", sitecfg.Name)
+		if cfg.NotifyCommand != "" {
+			err = exec.Command(cfg.NotifyCommand, msg).Run()
+		} else {
+			onload := func(w *gtk.Window) {
+				res, file, err = doThings()
+				glib.IdleAdd(w.Destroy)
+				DebugPrintln("Goroutine is exiting")
+			}
+			err = Notifyf(cfg.XineramaHead, infiniteTime, onload, msg)
+			return
 		}
-		err = Notifyf(cfg.XineramaHead, infiniteTime,
-			onload, "Uploading screenshot to %s...", sitecfg.Name)
-		return
 	}
 
 	newsitecfg = sitecfg
@@ -663,13 +675,21 @@ func ShareNix(cfg *Config, mode, site string, silent,
 
 	if notification {
 		if err != nil {
-			Notifyf(cfg.XineramaHead,
-				time.Second*time.Duration(cfg.NotificationTime), nil,
-				html.EscapeString(err.Error()))
+			if cfg.NotifyCommand != "" {
+				exec.Command(cfg.NotifyCommand, err.Error()).Run()
+			} else {
+				Notifyf(cfg.XineramaHead,
+					time.Second*time.Duration(cfg.NotificationTime), nil,
+					html.EscapeString(err.Error()))
+			}
 		} else {
-			Notifyf(cfg.XineramaHead,
-				time.Second*time.Duration(cfg.NotificationTime), nil,
-				`<a href="%s">%s</a>`, url, url)
+			if cfg.NotifyCommand != "" {
+				exec.Command(cfg.NotifyCommand, url).Run()
+			} else {
+				Notifyf(cfg.XineramaHead,
+					time.Second*time.Duration(cfg.NotificationTime), nil,
+					`<a href="%s">%s</a>`, url, url)
+			}
 		}
 	} else if copyurl {
 		DebugPrintln("Waiting for clipboard manager, feel free to",
