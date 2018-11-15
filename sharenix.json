@@ -1,54 +1,54 @@
 {
-    "DefaultFileUploader": "uguu.se",
-    "DefaultImageUploader": "imgur.com",
-    "DefaultUrlShortener": "waa.ai",
-    "XineramaHead": 0,
-    "NotificationTime": 30,
-    "NotifyUploading": true,
-		"NotifyCommand": "",
-    "ClipboardTime": 5,
+  "DefaultFileUploader": "uguu.se",
+  "DefaultImageUploader": "imgur.com",
+  "DefaultUrlShortener": "waa.ai",
+  "XineramaHead": 0,
+  "NotificationTime": 30,
+  "NotifyUploading": true,
+  "NotifyCommand": "",
+  "ClipboardTime": 5,
 
-    "Services": [
-        {
-            "Name": "waa.ai",
-            "RequestType": "GET",
-            "RequestURL": "https://api.waa.ai/shorten",
-            "Arguments": {
-                "url": "$input$"
-            },
-            "ResponseType": "Text",
-            "URL": "$json:data.url$",
-            "DeletionURL": "$json:data.delete_link$"
-        },
-        {
-            "Name": "uguu.se",
-            "RequestType": "POST",
-            "RequestURL": "https://uguu.se/api.php?d=upload-tool",
-            "FileFormName": "file",
-            "ResponseType": "Text"
-        },
-        {
-            "Name": "imgur.com",
-            "RequestType": "POST",
-            "Headers": {
-                "Authorization": "Client-ID b972ecca954f246"
-            },
-            "RequestURL": "https://api.imgur.com/3/image",
-            "FileFormName": "image",
-            "Arguments": {
-                "type": "file"
-            },
-            "ResponseType": "Text",
-            "URL": "$json:data.link$",
-            "DeletionURL": "https://imgur.com/delete/$json:data.deletehash$"
-        },
-        {
-            "Name": "owncloud (demo)",
-            "RequestType": "PUT",
-            "RequestURL": "https://demo.owncloud.org/remote.php/webdav/%yy-%mo-%d_%h-%mi-%s_$n$$extension$",
-            "Username": "test",
-            "Password": "test",
-            "ResponseType": "RedirectionURL"
-        }
-    ]
+  "Services": [
+    {
+      "Name": "waa.ai",
+      "RequestType": "GET",
+      "RequestURL": "https://api.waa.ai/shorten",
+      "Arguments": {
+        "url": "$input$"
+      },
+      "ResponseType": "Text",
+      "URL": "$json:data.url$",
+      "DeletionURL": "$json:data.delete_link$"
+    },
+    {
+      "Name": "uguu.se",
+      "RequestType": "POST",
+      "RequestURL": "https://uguu.se/api.php?d=upload-tool",
+      "FileFormName": "file",
+      "ResponseType": "Text"
+    },
+    {
+      "Name": "imgur.com",
+      "RequestType": "POST",
+      "Headers": {
+        "Authorization": "Client-ID b972ecca954f246"
+      },
+      "RequestURL": "https://api.imgur.com/3/image",
+      "FileFormName": "image",
+      "Arguments": {
+        "type": "file"
+      },
+      "ResponseType": "Text",
+      "URL": "$json:data.link$",
+      "DeletionURL": "https://imgur.com/delete/$json:data.deletehash$"
+    },
+    {
+      "Name": "owncloud (demo)",
+      "RequestType": "PUT",
+      "RequestURL": "https://demo.owncloud.org/remote.php/webdav/%yy-%mo-%d_%h-%mi-%s_$n$$extension$",
+      "Username": "test",
+      "Password": "test",
+      "ResponseType": "RedirectionURL"
+    }
+  ]
 }
