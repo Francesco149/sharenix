@@ -43,6 +43,15 @@ makepkg -si
 customize your config by copying /etc/sharenix.json to ~/.sharenix.json
 and editing it
 
+Installing - Void Linux
+============
+```
+sudo xbps-install sharenix scrot
+```
+
+customize your config by copying /etc/sharenix.json to ~/.sharenix.json
+and editing it
+
 Installing - Prebuilt binaries
 ============
 download the latest release from https://github.com/Francesco149/sharenix/releases
