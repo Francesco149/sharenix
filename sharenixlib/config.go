@@ -15,6 +15,12 @@
 
 package sharenixlib
 
+import (
+	"encoding/json"
+	"io/ioutil"
+	"path"
+)
+
 // A SiteConfig holds the json ShareX config for a single site
 type SiteConfig struct {
 	Name         string
@@ -43,6 +49,7 @@ type Config struct {
 	NotifyUploading      bool `json:",omitempty"`
 	NotifyCommand        string `json:",omitempty"`
 	ClipboardTime        float64 `json:",omitempty"`
+	SaveFolder			 string
 	Services             []SiteConfig
 }
 
@@ -154,5 +161,40 @@ func (cfg *Config) HandleFileType(currentsitecfg *SiteConfig,
 		err = &SiteNotFoundError{newsite}
 	}
 
+	return
+}
+
+func LoadConfig() (cfg *Config, err error) {
+	cfg = &Config{}
+	cfg.NotificationTime = 30
+	cfg.ClipboardTime = 5
+
+	exeFolder, err := GetExeDir()
+	if err != nil {
+		return
+	}
+
+	cfgName := "sharenix.json"
+
+	cfgPaths := [...]string{
+		path.Join(GetHome(), "."+cfgName),
+		path.Join(exeFolder, cfgName),
+		"/etc/" + cfgName,
+	}
+
+	var file []byte
+
+	for _, path := range cfgPaths {
+		file, err = ioutil.ReadFile(path)
+		if err == nil {
+			break
+		}
+	}
+
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(file, &cfg)
 	return
 }

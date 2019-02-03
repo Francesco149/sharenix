@@ -18,52 +18,15 @@ package main
 // NOTE: to compile this, you need gtk 2.0 and >=go-1.3.1
 
 import (
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"github.com/Francesco149/sharenix/sharenixlib"
-	"io/ioutil"
-	"path"
 )
 
-func loadConfig() (cfg *sharenixlib.Config, err error) {
-	cfg = &sharenixlib.Config{}
-	cfg.NotificationTime = 30
-	cfg.ClipboardTime = 5
-
-	exeFolder, err := sharenixlib.GetExeDir()
-	if err != nil {
-		return
-	}
-
-	cfgName := "sharenix.json"
-
-	cfgPaths := [...]string{
-		path.Join(sharenixlib.GetHome(), "."+cfgName),
-		path.Join(exeFolder, cfgName),
-		"/etc/" + cfgName,
-	}
-
-	var file []byte
-
-	for _, path := range cfgPaths {
-		file, err = ioutil.ReadFile(path)
-		if err == nil {
-			break
-		}
-	}
-
-	if err != nil {
-		return
-	}
-
-	err = json.Unmarshal(file, &cfg)
-	return
-}
 
 func handleCLI() (err error) {
-	cfg, err := loadConfig()
+	cfg, err := sharenixlib.LoadConfig()
 	if err != nil {
 		return
 	}
