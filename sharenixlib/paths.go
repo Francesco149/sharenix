@@ -77,7 +77,7 @@ func GetArchiveDir() (res string, err error) {
 	if organized {
 		res = path.Join(storage, DatedFolder)
 	}else{
-		res = storage
+		res = path.Join(storage, "archive")
 	}
 
 	err = MkDirIfNotExists(res)
