@@ -18,8 +18,6 @@ package sharenixlib
 import (
 	"fmt"
 	"os"
-	"path"
-	"strconv"
 	"time"
 )
 
@@ -95,13 +93,5 @@ func MkDirIfNotExists(dir string) error {
 func GetDate() string {
 	ye := time.Now().Year()
 	mo := time.Now().Month()
-	var month string
-
-	if int(mo) < 10 {
-		month = "0" + strconv.Itoa(int(mo))
-	} else {
-		month = strconv.Itoa(int(mo))
-	}
-
-	return path.Join(fmt.Sprintf("%v-%v", ye, month))
+	return fmt.Sprintf("%04d-%02d", ye, int(mo))
 }
