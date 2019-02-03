@@ -332,6 +332,9 @@ sharenix.json contains a SaveFolder field which is relative to your
 home folder. that's the base folder for your archived files and history csv
 which defaults to "sharenix"
 
+if SaveFolder starts with a leading "/" it will be considered an absolute
+path
+
 you can also enable "OrganizedFolders" which will organize your files into
 folders for each month named like "2019-02"
 

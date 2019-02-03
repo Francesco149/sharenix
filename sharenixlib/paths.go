@@ -22,6 +22,7 @@ import (
 	"os/user"
 	"path"
 	"time"
+	"strings"
 )
 
 func GetExeDir() (execpath string, err error) {
@@ -51,7 +52,11 @@ func GetStorageDir() (res string, err error) {
 	}
 
 	if cfg.SaveFolder != "" {
-		res = path.Join(GetHome(), cfg.SaveFolder)
+		if strings.HasPrefix(cfg.SaveFolder, "/") {
+			res = cfg.SaveFolder
+		} else {
+			res = path.Join(GetHome(), cfg.SaveFolder)
+		}
 	} else {
 		res = path.Join(GetHome(), "sharenix")
 	}
