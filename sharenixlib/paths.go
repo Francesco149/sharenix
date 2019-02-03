@@ -49,7 +49,7 @@ func GetStorageDir() (res string, err error) {
 	if err2 != nil{
 		return
 	}
-	storage := cfg.SaveFolder
+	storage := path.Join(GetHome(), cfg.SaveFolder)
 
 	res = storage
 	err = MkDirIfNotExists(res)
