@@ -46,11 +46,11 @@ type Config struct {
 	DefaultUrlShortener  string
 	XineramaHead         uint32  `json:",omitempty"`
 	NotificationTime     float64 `json:",omitempty"`
-	NotifyUploading      bool `json:",omitempty"`
-	NotifyCommand        string `json:",omitempty"`
+	NotifyUploading      bool    `json:",omitempty"`
+	NotifyCommand        string  `json:",omitempty"`
 	ClipboardTime        float64 `json:",omitempty"`
-	SaveFolder           string `json:",omitempty"`
-	OrganizedFolders     bool `json:",omitempty"`
+	SaveFolder           string  `json:",omitempty"`
+	OrganizedFolders     bool    `json:",omitempty"`
 	Services             []SiteConfig
 }
 

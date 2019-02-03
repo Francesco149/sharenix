@@ -24,7 +24,6 @@ import (
 	"github.com/Francesco149/sharenix/sharenixlib"
 )
 
-
 func handleCLI() (err error) {
 	cfg, err := sharenixlib.LoadConfig()
 	if err != nil {
