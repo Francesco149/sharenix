@@ -44,14 +44,18 @@ func GetHome() (res string) {
 
 // Returns the path to the storage directory
 func GetStorageDir() (res string, err error) {
-	cfg, err2 := LoadConfig()
+	cfg, err := LoadConfig()
 
-	if err2 != nil {
+	if err != nil {
 		return
 	}
-	storage := path.Join(GetHome(), cfg.SaveFolder)
 
-	res = storage
+	if cfg.SaveFolder != "" {
+		res = path.Join(GetHome(), cfg.SaveFolder)
+	} else {
+		res = path.Join(GetHome(), "sharenix")
+	}
+
 	err = MkDirIfNotExists(res)
 	return
 }
