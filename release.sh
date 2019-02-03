@@ -7,7 +7,7 @@ echo ""
 echo "Compiling and Stripping"
 LDFLAGS="$LDFLAGS -s -w -Wl,--gc-sections"
 #LDFLAGS="$LDFLAGS $(pkg-config --libs gtk+-2.0)"
-go build --ldflags "-linkmode external -extldflags '$LDFLAGS'"
+go build --ldflags "-linkmode external -extldflags '$LDFLAGS'" || exit $?
 
 echo ""
 echo "Packaging"
