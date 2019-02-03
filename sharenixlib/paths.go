@@ -46,7 +46,7 @@ func GetHome() (res string) {
 func GetStorageDir() (res string, err error) {
 	cfg, err2 := LoadConfig()
 
-	if err2 != nil{
+	if err2 != nil {
 		return
 	}
 	storage := path.Join(GetHome(), cfg.SaveFolder)
@@ -62,7 +62,7 @@ func GetStorageDir() (res string, err error) {
 func GetArchiveDir() (res string, err error) {
 	cfg, err2 := LoadConfig()
 
-	if err2 != nil{
+	if err2 != nil {
 		return
 	}
 
@@ -76,7 +76,7 @@ func GetArchiveDir() (res string, err error) {
 
 	if organized {
 		res = path.Join(storage, DatedFolder)
-	}else{
+	} else {
 		res = path.Join(storage, "archive")
 	}
 
@@ -103,11 +103,11 @@ func GenerateArchivedFilename(extension string) (string, error) {
 		if _, err := os.Stat(p); os.IsNotExist(err) {
 			return p, nil
 		} else if i >= 1000 {
-				return p, fmt.Errorf("Failed to generate unique filename")
+			return p, fmt.Errorf("Failed to generate unique filename")
 		}
 	}
 
-	return "",fmt.Errorf("This should never happen")
+	return "", fmt.Errorf("This should never happen")
 }
 
 // GetHistoryCSV returns the absolute path to the history csv.

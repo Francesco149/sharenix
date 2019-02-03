@@ -97,12 +97,11 @@ func GetDate() string {
 	mo := time.Now().Month()
 	var month string
 
-	if int(mo) < 10{
+	if int(mo) < 10 {
 		month = "0" + strconv.Itoa(int(mo))
-	}else{
+	} else {
 		month = strconv.Itoa(int(mo))
 	}
 
 	return path.Join(fmt.Sprintf("%v-%v", ye, month))
 }
-
