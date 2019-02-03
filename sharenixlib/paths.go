@@ -42,25 +42,36 @@ func GetHome() (res string) {
 	return
 }
 
+// Returns the path to the storage directory
 func GetStorageDir() (res string, err error) {
-	res = path.Join(GetHome(), "sharenix")
+	cfg, err2 := LoadConfig()
+
+	if err2 != nil{
+		return
+	}
+	storage := cfg.SaveFolder
+
+	res = storage
 	err = MkDirIfNotExists(res)
 	return
 }
 
 // GetArchiveDir returns the absolute path to the archive directory.
+// Returns the current monthly directory eg. /2019-01/
 func GetArchiveDir() (res string, err error) {
 	storage, err := GetStorageDir()
 	if err != nil {
 		return
 	}
-	res = path.Join(storage, "archive")
+
+	DatedFolder := GetDate()
+	res = path.Join(storage, DatedFolder)
 	err = MkDirIfNotExists(res)
 	return
 }
 
 // GenerateArchivedFilename returns an unique file path inside
-// archive/ that contains the current date, time and nanotime.
+// StorageDir that contains the current date and time
 func GenerateArchivedFilename(extension string) (string, error) {
 	t := time.Now()
 	ye, mo, da := t.Date()
@@ -71,8 +82,8 @@ func GenerateArchivedFilename(extension string) (string, error) {
 		return "", err
 	}
 
-	return path.Join(archiveDir, fmt.Sprintf("%v-%v-%v_%v-%v-%v_%v%s",
-		ye, int(mo), da, hour, min, sec, t.UnixNano(), extension)), nil
+	return path.Join(archiveDir, fmt.Sprintf("%v-%v-%v_%v-%v-%v%s",
+		ye, int(mo), da, hour, min, sec, extension)), nil
 }
 
 // GetHistoryCSV returns the absolute path to the history csv.

@@ -18,6 +18,9 @@ package sharenixlib
 import (
 	"fmt"
 	"os"
+	"path"
+	"strconv"
+	"time"
 )
 
 // Println prints the given thext only if silent is false
@@ -87,3 +90,19 @@ func MkDirIfNotExists(dir string) error {
 
 	return nil
 }
+
+// Returns the current year and month in format "2019-01"
+func GetDate() string {
+	ye := time.Now().Year()
+	mo := time.Now().Month()
+	var month string
+
+	if int(mo) < 10{
+		month = "0" + strconv.Itoa(int(mo))
+	}else{
+		month = strconv.Itoa(int(mo))
+	}
+
+	return path.Join(fmt.Sprintf("%v-%v", ye, month))
+}
+
