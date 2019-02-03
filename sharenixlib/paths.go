@@ -57,15 +57,29 @@ func GetStorageDir() (res string, err error) {
 }
 
 // GetArchiveDir returns the absolute path to the archive directory.
-// Returns the current monthly directory eg. /2019-01/
+// If "OrganizedFolders" is set to True in config
+// sharenix will create directories in StorageDir in format /2019-02/
 func GetArchiveDir() (res string, err error) {
+	cfg, err2 := LoadConfig()
+
+	if err2 != nil{
+		return
+	}
+
+	organized := cfg.OrganizedFolders
+	DatedFolder := GetDate()
+
 	storage, err := GetStorageDir()
 	if err != nil {
 		return
 	}
 
-	DatedFolder := GetDate()
-	res = path.Join(storage, DatedFolder)
+	if organized {
+		res = path.Join(storage, DatedFolder)
+	}else{
+		res = storage
+	}
+
 	err = MkDirIfNotExists(res)
 	return
 }
