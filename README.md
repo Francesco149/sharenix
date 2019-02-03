@@ -326,6 +326,15 @@ $ sharenix -q -c=0 /path/to/my/file | xclip -i -sel cli
 xclip will fork into a background process to keep the URL around until
 something grabs ownership of it.
 
+Customize archive folder
+============
+sharenix.json contains a SaveFolder field which is relative to your
+home folder. that's the base folder for your archived files and history csv
+which defaults to "sharenix"
+
+you can also enable "OrganizedFolders" which will organize your files into
+folders for each month named like "2019-02"
+
 Plugins
 ============
 Sharenix has a very early form of plugins as of 0.3.0a. Feel free to contact me
