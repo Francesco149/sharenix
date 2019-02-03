@@ -49,7 +49,8 @@ type Config struct {
 	NotifyUploading      bool `json:",omitempty"`
 	NotifyCommand        string `json:",omitempty"`
 	ClipboardTime        float64 `json:",omitempty"`
-	SaveFolder			 string
+	SaveFolder           string `json:",omitempty"`
+	OrganizedFolders     bool `json:",omitempty"`
 	Services             []SiteConfig
 }
 
