@@ -96,8 +96,18 @@ func GenerateArchivedFilename(extension string) (string, error) {
 		return "", err
 	}
 
-	return path.Join(archiveDir, fmt.Sprintf("%v-%v-%v_%v-%v-%v%s",
-		ye, int(mo), da, hour, min, sec, extension)), nil
+	i := 0
+	for {
+		p := path.Join(archiveDir, fmt.Sprintf("%v-%v-%v_%v-%v-%v_%d%s",
+			ye, int(mo), da, hour, min, sec, i, extension))
+		if _, err := os.Stat(p); os.IsNotExist(err) {
+			return p, nil
+		} else if i >= 1000 {
+				return p, fmt.Errorf("Failed to generate unique filename")
+		}
+	}
+
+	return "",fmt.Errorf("This should never happen")
 }
 
 // GetHistoryCSV returns the absolute path to the history csv.
