@@ -33,7 +33,7 @@ func GetClipboard() *gtk.Clipboard {
 	return gtk.NewClipboardGetForDisplay(display, gdk.SELECTION_CLIPBOARD)
 }
 
-// SetClipbboardText sets the clipboard text contents and calls
+// SetClipboardText sets the clipboard text contents and calls
 // clipboard.Store().
 // Note: this requires the program to run at least a few cycles of the main loop
 // and it is not guaranteed to persist on all window managers once the program

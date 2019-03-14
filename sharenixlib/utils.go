@@ -89,7 +89,7 @@ func MkDirIfNotExists(dir string) error {
 	return nil
 }
 
-// Returns the current year and month in format "2019-01"
+// GetDate returns the current year and month in format "2019-01"
 func GetDate() string {
 	ye := time.Now().Year()
 	mo := time.Now().Month()

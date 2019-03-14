@@ -43,7 +43,7 @@ func GetHome() (res string) {
 	return
 }
 
-// Returns the path to the storage directory
+// GetStorageDir returns the path to the storage directory
 func GetStorageDir() (res string, err error) {
 	cfg, err := LoadConfig()
 
