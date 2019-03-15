@@ -58,8 +58,14 @@ download the latest release from https://github.com/Francesco149/sharenix/releas
 
 ```bash
 tar xvf sharenix-*.tar.xz
+
 sudo cp sharenix-*/sharenix /usr/bin
 sudo chmod +x /usr/bin/sharenix
+sudo cp sharenix-*/src/sharenix-section /usr/bin
+sudo chmod +x /usr/bin/sharenix-section
+sudo cp sharenix-*/src/sharenix-window /usr/bin
+sudo chmod +x /usr/bin/sharenix-window 
+
 cp sharenix-*/sharenix.json ~/.sharenix.json
 sharenix -h
 ```
