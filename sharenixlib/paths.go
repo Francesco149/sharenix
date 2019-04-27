@@ -21,8 +21,8 @@ import (
 	"os"
 	"os/user"
 	"path"
-	"time"
 	"strings"
+	"time"
 )
 
 func GetExeDir() (execpath string, err error) {

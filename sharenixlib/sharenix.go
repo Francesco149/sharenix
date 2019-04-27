@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.10.3a"
+	ShareNixVersion = "ShareNix 0.11.0a"
 )
 
 const (
@@ -141,7 +141,7 @@ func ReplaceKeywords(input, extension string, sitecfg *SiteConfig) {
 // silent: disables all console output except errors
 // notif: if true, a notification will display during and after the request
 func UploadFile(cfg *Config, sitecfg *SiteConfig, path string,
-	silent, notif bool) (
+	silent, notif, upload bool) (
 	res *http.Response, filename string, newsitecfg *SiteConfig, err error) {
 
 	// this hack fixes "invalid argument" when there's leftover zero bytes
@@ -263,7 +263,8 @@ func ShortenUrl(cfg *Config, sitecfg *SiteConfig, url string,
 // sitecfg: the target site config
 // silent: disables all console output except errors
 // notif: if true, a notification will display during and after the request
-func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
+func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif,
+	upload bool) (
 	res *http.Response, file string, newsitecfg *SiteConfig, err error) {
 
 	newsitecfg = sitecfg
@@ -294,6 +295,10 @@ func UploadFullScreen(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 
 	err = png.Encode(tmpfile, img)
 	tmpfile.Close()
+
+	if !upload {
+		return
+	}
 
 	// TODO: avoid repeating this loop in every upload function and move
 	// it to its own func
@@ -389,7 +394,8 @@ func ArchiveFile(path string) (err error) {
 // sitecfg: the target site config
 // silent: disables all console output except errors
 // notif: if true, a notification will display during and after the request
-func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
+func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif,
+	upload bool) (
 	res *http.Response, filename string, newsitecfg *SiteConfig, err error) {
 
 	defaultConfig := sitecfg.Name == cfg.DefaultFileUploader
@@ -427,8 +433,12 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 			}
 			// TODO: merge all archive calls into one in UploadFile
 
+			if !upload {
+				return
+			}
+
 			return UploadFile(
-				cfg, sitecfg, urilist[0].Path, silent, notif)
+				cfg, sitecfg, urilist[0].Path, silent, notif, upload)
 		}
 		DebugPrintln("URI list is empty")
 	} else {
@@ -466,7 +476,11 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		_, err = tmpfile.WriteString(selectionstr)
 		tmpfile.Close()
 
-		return UploadFile(cfg, sitecfg, afilepath, silent, notif)
+		if !upload {
+			return
+		}
+
+		return UploadFile(cfg, sitecfg, afilepath, silent, notif, upload)
 	} else {
 		DebugPrintln("gtk_clipboard_wait_for_text returned an empty string")
 	}
@@ -498,7 +512,11 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 		// TODO: for some reason this always returns an err which
 		// prints as nil so we can't error check here :(
 
-		return UploadFile(cfg, sitecfg, afilepath, silent, notif)
+		if !upload {
+			return
+		}
+
+		return UploadFile(cfg, sitecfg, afilepath, silent, notif, upload)
 	} else {
 		DebugPrintln("gtk_clipboard_wait_for_image returned NULL")
 	}
@@ -526,7 +544,7 @@ func UploadClipboard(cfg *Config, sitecfg *SiteConfig, silent, notif bool) (
 	copyurl: stores the url in the clipboard after uploading
 */
 func ShareNix(cfg *Config, mode, site string, silent,
-	notification, open, copyurl bool) (
+	notification, open, copyurl, upload bool) (
 	url, thumburl, deleteurl string, err error) {
 
 	var sitecfg *SiteConfig
@@ -566,24 +584,27 @@ func ShareNix(cfg *Config, mode, site string, silent,
 		if err = ArchiveFile(flag.Args()[0]); err != nil {
 			return
 		}
-		res, filename, sitecfg, err = UploadFile(cfg, sitecfg,
-			flag.Args()[0], silent, notification)
+		if !upload {
+			return
+		}
+		res, filename, sitecfg, err = UploadFile(cfg, sitecfg, flag.Args()[0],
+			silent, notification, upload)
 
 	case "fs", "fullscreen":
-		res, filename, sitecfg, err = UploadFullScreen(
-			cfg, sitecfg, silent, notification)
+		res, filename, sitecfg, err = UploadFullScreen(cfg, sitecfg, silent,
+			notification, upload)
 
 	case "c", "clipboard":
 		res, filename, sitecfg, err =
-			UploadClipboard(cfg, sitecfg, silent, notification)
+			UploadClipboard(cfg, sitecfg, silent, notification, upload)
 
 	case "u", "url":
 		if len(flag.Args()) != 1 {
 			err = errors.New("No url provided")
 			return
 		}
-		res, err = ShortenUrl(cfg, sitecfg,
-			flag.Args()[0], silent, notification)
+		res, err = ShortenUrl(cfg, sitecfg, flag.Args()[0], silent,
+			notification)
 		filename = flag.Args()[0]
 
 	case "s", "section":

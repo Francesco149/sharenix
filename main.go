@@ -58,6 +58,9 @@ func handleCLI() (err error) {
 	pdebug := flag.Bool("g", false, "Show verbose debug information "+
 		"(output can include sensitive info such as API keys)")
 
+	pupload := flag.Bool("upload", true, "If false, the file will be "+
+		"archived but not uploaded")
+
 	flag.Parse()
 	if !flag.Parsed() {
 		panic(errors.New("Unexpected flag error"))
@@ -98,7 +101,8 @@ func handleCLI() (err error) {
 
 	// perform upload
 	_, _, _, err = sharenixlib.ShareNix(
-		cfg, *pmode, *psite, *psilent, *pnotification, *popen, *pclip)
+		cfg, *pmode, *psite, *psilent, *pnotification, *popen, *pclip,
+		*pupload)
 	if err != nil {
 		return
 	}
