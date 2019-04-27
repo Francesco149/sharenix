@@ -27,6 +27,8 @@ ShareNix is somewhat compatible with ShareX's json config format.
 If you're a ShareX user, you can easily import your settings by pasting
 them in the Services section of sharenix.json
 
+this was one of my first golang projects. don't expect good code
+
 Installing - Arch Linux
 ============
 if you use arch linux, there's an aur package that compiles and installs
