@@ -15,7 +15,7 @@
 sleep 0.2s
 
 if command -v xfce4-screenshooter > /dev/null 2>&1; then
-    xfce4-screenshooter -w -o "sharenix -n"
+    xfce4-screenshooter -w -o "sharenix -n $*"
     exit $?
 fi
 
@@ -41,7 +41,7 @@ fi
 sharenixtmpsize=$(wc -c <"$sharenixtmp")
 
 if [ $sharenixtmpsize != 0 ]; then
-    sharenix -n $sharenixtmp
+    sharenix -n "$@" $sharenixtmp
     exit $?
 fi
 
