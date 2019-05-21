@@ -5,6 +5,7 @@
 # requires:
 # - https://github.com/Francesco149/sharenix
 # - any of:
+#     maim + xdotool
 #     http://www.linuxbrit.co.uk/scrot
 #     https://github.com/GNOME/gnome-screenshot
 #     http://goodies.xfce.org/projects/
@@ -28,6 +29,8 @@ sharenixtmp="$sharenixtmp.png"
 
 if command -v gnome-screenshot > /dev/null 2>&1; then
     gnome-screenshot -w -f $sharenixtmp || exit $?
+elif command -v maim > /dev/null 2>&1; then
+    maim -i $(xdotool getactivewindow) $sharenixtmp || exit $?
 elif command -v scrot > /dev/null 2>&1; then
     scrot -u $sharenixtmp || exit $?
 else
