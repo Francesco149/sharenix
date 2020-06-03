@@ -32,7 +32,7 @@ if command -v gnome-screenshot > /dev/null 2>&1; then
 elif command -v maim > /dev/null 2>&1; then
     maim -i $(xdotool getactivewindow) $sharenixtmp || exit $?
 elif command -v scrot > /dev/null 2>&1; then
-    scrot -u $sharenixtmp || exit $?
+    scrot -o -u $sharenixtmp || exit $?
 else
     echo "Couldn't find scrot, gnome-screenshot or " \
          "xfce4-screenshooter."

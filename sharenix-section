@@ -33,7 +33,7 @@ if command -v gnome-screenshot > /dev/null 2>&1; then
 elif command -v maim > /dev/null 2>&1; then
     maim -s $sharenixtmp || exit $?
 elif command -v scrot > /dev/null 2>&1; then
-    scrot -s $sharenixtmp || exit $?
+    scrot -o -s $sharenixtmp || exit $?
 else
     echo "Couldn't find scrot, gnome-screenshot or " \
          "xfce4-screenshooter."
