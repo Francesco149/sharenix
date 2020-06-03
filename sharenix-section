@@ -34,8 +34,10 @@ elif command -v maim > /dev/null 2>&1; then
     maim -s $sharenixtmp || exit $?
 elif command -v scrot > /dev/null 2>&1; then
     scrot -o -s $sharenixtmp || exit $?
+elif command -v shot > /dev/null 2>&1; then
+    shot --output=$sharenixtmp --interactive || exit $?
 else
-    echo "Couldn't find scrot, gnome-screenshot or " \
+    echo "Couldn't find scrot, maim, shot, gnome-screenshot or " \
          "xfce4-screenshooter."
     echo "Please install either of them and try again"
     exit 1
