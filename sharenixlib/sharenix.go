@@ -65,6 +65,7 @@ func fakeResponseStart(code int, body string) (*httptest.Server, *http.Client) {
 	server = httptest.NewServer(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(code)
+			w.Header().Set("User-Agent", strings.Replace(ShareNixVersion, " ", "/", 1))
 			w.Header().Set("Content-Type", "plain/text")
 			fmt.Fprintln(w, body)
 		}),

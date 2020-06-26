@@ -174,6 +174,7 @@ func SendRequest(method, url, fileParamName, filePath string,
 	}
 
 	// extra headers
+	req.Header.Set("User-Agent", strings.Replace(ShareNixVersion, " ", "/", 1))
 	for hname, hval := range extraHeaders {
 		req.Header.Set(hname, hval)
 	}
