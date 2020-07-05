@@ -98,13 +98,14 @@ func fakeResponseEnd() {
 // $m$/%mi: local minutes padded to 2 digits
 // $s$/%s: local seconds padded to 2 digits
 // $n$: local nanoseconds
-// $input$: whatever is passed as input
+// $input$, $filename$: whatever is passed as input
 // $extension$: whatever is passed as extension
 func ReplaceKeywords(input, extension string, sitecfg *SiteConfig) {
 	t := time.Now()
 	// TODO: do this in a non-shitty way that is escape-able
 	replacements := map[string]func() string{
 		"$input$":     func() string { return input },
+		"$filename$":  func() string { return input },
 		"$extension$": func() string { return extension },
 		"$Y$":         func() string { return fmt.Sprintf("%04d", t.Year()) },
 		"%yy":         func() string { return fmt.Sprintf("%04d", t.Year()) },
