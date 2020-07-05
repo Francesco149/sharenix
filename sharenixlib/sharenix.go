@@ -44,7 +44,7 @@ import (
 )
 
 const (
-	ShareNixVersion = "ShareNix 0.11.2a"
+	ShareNixVersion = "ShareNix 0.11.3a"
 )
 
 const (
@@ -131,6 +131,10 @@ func ReplaceKeywords(input, extension string, sitecfg *SiteConfig) {
 
 	for i := range sitecfg.Arguments {
 		sitecfg.Arguments[i] = replacer(sitecfg.Arguments[i])
+	}
+
+	for k, _ := range sitecfg.Headers {
+		sitecfg.Headers[k] = replacer(sitecfg.Headers[k])
 	}
 
 	sitecfg.RequestURL = replacer(sitecfg.RequestURL)
