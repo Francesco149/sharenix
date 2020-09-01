@@ -630,7 +630,7 @@ func ShareNix(cfg *Config, mode, site string, silent,
 	case "RedirectionURL":
 		DebugPrintln("Getting redirection url...")
 		url = res.Request.URL.String()
-	case "Text":
+	case "", "Text":
 		// parse response
 		DebugPrintln("Parsing response...")
 		rbody := &bytes.Buffer{}
