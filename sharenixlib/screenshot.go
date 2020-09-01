@@ -50,9 +50,9 @@ func (a ByX) Less(i, j int) bool {
 func ScreenRects(X *xgb.Conn) (rects []*ScreenRect, err error) {
 	// xinerama
 	for {
-		err = xinerama.Init(X)
-		if err != nil {
-			DebugPrintln(err)
+		xinerr := xinerama.Init(X)
+		if xinerr != nil {
+			DebugPrintln(xinerr)
 			break
 		}
 
