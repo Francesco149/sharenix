@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"path"
+	"os"
 )
 
 // A SiteConfig holds the json ShareX config for a single site
