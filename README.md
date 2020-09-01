@@ -29,6 +29,10 @@ them in the Services section of sharenix.json
 
 this was one of my first golang projects. don't expect good code
 
+the project is mostly in mainteinance mode. I don't have interest in developing it further as I have
+been moving to a minimal setup with just a shell script to upload screenshots. but I don't mind
+pushing small improvements here and there
+
 Installing - Arch Linux
 ============
 if you use arch linux, there's an aur package that compiles and installs
@@ -194,16 +198,16 @@ Feature progress
 * Archiving clipboard and screenshot uploads to a local folder - done
   (saved in ~/sharenix/archive/)
 * Plugin system - done (still very early)
-* Upload multiple files from clipboard - WIP
 * Upload text from clipboard - done
 * URL shortening - done
-* Screen region selection - WIP
-* Upload progress bar - WIP
+* Screen region selection - done, uses external tools
 * Basic upload history csv file - done (./sharenix -history)
 * Grep-able upload history output - done (./sharenix -history | grep helloworld)
-* GUI tools for config & history - WIP
 * Clickable GTK notifications - done (-n flag)
-* Screen recording - WIP
+
+* GUI tools for config & history - I have decided that this is out of the scope of this project
+  as I don't care about GUI. but if you made a gui for sharenix you are welcome to show off your
+  project
 
 Getting started - Building from the source
 ============
