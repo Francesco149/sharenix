@@ -177,10 +177,16 @@ func LoadConfig() (cfg *Config, err error) {
 
 	cfgName := "sharenix.json"
 
+	cfgPath := os.Getenv("XDG_CONFIG_HOME")
+	if cfgPath == "" {
+		cfgPath = path.Join(GetHome(), ".config")
+	}
 	cfgPaths := [...]string{
 		path.Join(GetHome(), "."+cfgName),
 		path.Join(exeFolder, cfgName),
-		"/etc/" + cfgName,
+		path.Join("/etc/", cfgName),
+		path.Join("/usr/local/etc/", cfgName),
+		path.Join(cfgPath, "sharenix", cfgName),
 	}
 
 	var file []byte

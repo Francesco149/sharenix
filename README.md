@@ -93,6 +93,9 @@ sharenix.json locations, from highest to lowest priority:
 ~/.sharenix.json
 (base path to sharenix's executable)/sharenix.json
 /etc/sharenix.json
+/usr/local/etc/sharenix.json
+$XDG_CONFIG_HOME/sharenix/sharenix.json
+~/.config/sharenix/sharenix.json
 ```
 
 The first config file that is found, starting from top to bottom, will be used.
