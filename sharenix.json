@@ -7,7 +7,7 @@
   "NotifyUploading": true,
   "NotifyCommand": "",
   "ClipboardTime": 5,
-  "SaveFolder": "sharenix",
+  "SaveFolder": ".local/share/sharenix",
   "OrganizedFolders": false,
 
   "Services": [
