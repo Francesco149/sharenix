@@ -46,8 +46,7 @@ cd sharenix-git
 makepkg -si
 ```
 
-customize your config by copying /etc/sharenix.json to ~/.sharenix.json
-and editing it
+customize your config by copying /etc/sharenix.json to ~/.sharenix.json and editing it
 
 Installing - Void Linux
 ============
