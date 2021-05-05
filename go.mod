@@ -12,5 +12,5 @@ require (
 	github.com/mvdan/xurls v1.1.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	golang.org/x/net v0.0.0-20210505024714-0287a6fb4125 // indirect
-	mvdan.cc/xurls v1.1.0
+	mvdan.cc/xurls/v2 v2.2.0
 )
