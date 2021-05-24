@@ -33,7 +33,7 @@ if command -v flameshot > /dev/null 2>&1; then
 elif command -v gnome-screenshot > /dev/null 2>&1; then
     gnome-screenshot -a -f $sharenixtmp || exit $?
 elif command -v maim > /dev/null 2>&1; then
-    maim -s $sharenixtmp || exit $?
+    maim --hidecursor -s $sharenixtmp || exit $?
 elif command -v scrot > /dev/null 2>&1; then
     scrot -o -s $sharenixtmp || exit $?
 elif command -v shot > /dev/null 2>&1; then
