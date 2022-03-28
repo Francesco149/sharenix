@@ -32,6 +32,8 @@ if command -v flameshot > /dev/null 2>&1; then
     flameshot gui --raw > $sharenixtmp || exit $?
 elif command -v gnome-screenshot > /dev/null 2>&1; then
     gnome-screenshot -a -f $sharenixtmp || exit $?
+elif command -v grimshot > /dev/null 2>&1; then
+    grimshot save area $sharenixtmp || exit $?
 elif command -v maim > /dev/null 2>&1; then
     maim -s $sharenixtmp || exit $?
 elif command -v scrot > /dev/null 2>&1; then

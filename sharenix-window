@@ -29,6 +29,8 @@ sharenixtmp="$sharenixtmp.png"
 
 if command -v gnome-screenshot > /dev/null 2>&1; then
     gnome-screenshot -w -f $sharenixtmp || exit $?
+elif command -v grimshot > /dev/null 2>&1; then
+    grimshot save window $sharenixtmp || exit $?
 elif command -v maim > /dev/null 2>&1; then
     maim -i $(xdotool getactivewindow) $sharenixtmp || exit $?
 elif command -v scrot > /dev/null 2>&1; then
